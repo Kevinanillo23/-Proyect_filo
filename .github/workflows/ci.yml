@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            Revista_Back/backend/package-lock.json
+            Revista_Front/frontend/package-lock.json
+
+      - name: Instalar dependencias del Backend
+        run: |
+          cd Revista_Back/backend
+          npm install
+
+      - name: Instalar dependencias del Frontend
+        run: |
+          cd Revista_Front/frontend
+          npm install
+
+      # Opcional: Ejecutar Linting
+      - name: Ejecutar Lint
+        run: |
+          cd Revista_Front/frontend
+          npm run lint || echo "Linting failed but continuing..."
+
+      # Nota: Ejecutar Cypress en CI requiere levantar bases de datos temporales.
+      # Por ahora, añadiremos el paso de construcción para asegurar que no hay errores de compilación.
+      - name: Verificar Build del Frontend
+        run: |
+          cd Revista_Front/frontend
+          npm run build
