@@ -1,86 +1,72 @@
-# 🦅 Filosofía&Co (FILCO) - Fullstack Web Application
+# 🦅 Filosofía&Co (FILCO) - Fullstack Web Application (Senior Grade)
 
-Bienvenido a **Filosofía&Co**, una plataforma profesional diseñada para la gestión y lectura de artículos filosóficos, podcasts y recursos culturales. Esta aplicación ha sido desarrollada siguiendo estándares modernos de seguridad, arquitectura de bases de datos y experiencia de usuario.
+Bienvenido a **Filosofía&Co**, una plataforma profesional de alta gama diseñada para la gestión, lectura y administración de contenido cultural. Este proyecto ha sido transformado desde una base académica a una aplicación de nivel empresarial, implementando patrones de diseño avanzados, seguridad multicapa y una arquitectura escalable.
 
 ---
 
-## 🚀 Características Principales
+## 🚀 Mejoras de Ingeniería Implementadas
 
-### **Frontend (React 19 + Vite)**
-- **🎨 Interfaz Premium**: Diseño moderno y minimalista enfocado en la lectura, con feedback visual mediante `react-hot-toast`.
-- **🛡️ Seguridad en el Cliente**: Sistema de **Rutas Protegidas** que impide el acceso no autorizado a paneles de administración.
-- **📱 Responsive Design**: Totalmente adaptado para dispositivos móviles con menús interactivos.
-- **🔄 Gestión Dinámica**: CRUD completo de artículos y usuarios con previsualización de imágenes y confirmaciones de seguridad.
+### **1. 🔐 Seguridad Senior & Autenticación**
+- **Doble Sistema de Tokens (Refresh Tokens)**: Implementación de **Access Tokens** (de corta duración) y **Refresh Tokens** (de larga duración, almacenados en DB) para sesiones infinitas seguras sin pedir login constante.
+- **Auto-Renovación Transparente**: El frontend incluye un interceptor (`fetchWithAuth`) que renueva el token automáticamente cuando expira, sin interrumpir al usuario.
+- **Blindaje de API**:
+  - **Helmet**: Cabeceras de seguridad HTTP completas.
+  - **Rate Limiting**: Limitación de peticiones por IP para prevenir ataques de fuerza bruta y DoS.
+  - **XSS & NoSQL Injection**: Sanitización total de todas las entradas del usuario.
+  - **HPP**: Protección contra contaminación de parámetros.
 
-### **Backend (Node.js + Express)**
-- **🏰 Arquitectura de Datos Dual**: 
-  - **MySQL (Sequelize)**: Gestión robusta de usuarios y roles.
-  - **MongoDB (Mongoose)**: Almacenamiento flexible y escalable de artículos y contenido.
-- **🛡️ Blindaje de API**:
-  - **Helmet**: Cabeceras de seguridad HTTP.
-  - **Rate Limiting**: Protección contra ataques de fuerza bruta.
-  - **Sanitización**: Defensa contra Inyecciones NoSQL y ataques XSS.
-- **📧 Autenticación Avanzada**: Login con **JWT**, Hasheo de contraseñas con **Bcrypt** y sistema de recuperación por email (Nodemailer).
+### **2. �️ Arquitectura Dual de Bases de Datos**
+- **MySQL (Sequelize)**: Gestiona la estructura relacional de los **Usuarios y Roles**, garantizando integridad referencial.
+- **MongoDB (Mongoose)**: Maneja los **Artículos y Contenido** de forma flexible y escalable, permitiendo metadatos variables.
 
-### **Calidad y Documentación**
-- **🧪 Testing E2E**: Suite completa de pruebas con **Cypress** (Login, Registro, CRUD Artículos y Seguridad).
-- **📖 Documentación**: API totalmente documentada con **Swagger** y código comentado con **JSDoc**.
+### **3. � Escalabilidad & Performance**
+- **Paginación Backend**: La API de artículos soporta paginación real (`limit` y `page`), evitando sobrecargar la red.
+- **Carga Optimizada**: El frontend solicita solo el contenido necesario (Ej: los 6 artículos más recientes en Home).
+- **Hybrid Configuration**: El código detecta automáticamente si estás en `local` o `producción`, configurando las bases de datos y la API sin intervención manual.
+
+### **4. 🛡️ Experiencia de Usuario (UX) e Interfaz**
+- **Rutas Protegidas**: Sistema de seguridad en el cliente que bloquea paneles de administración basándose en el rol del JWT.
+- **Sistema de Toasts**: Feedback visual premium con `react-hot-toast` para todas las acciones CRUD.
+- **Gestión de Imágenes**: Soporte para URLs dinámicas con previsualización en el panel de administrador.
+- **Confirmación de Seguridad**: Diálogos de confirmación antes de eliminaciones críticas.
+
+---
+
+## 🧪 Calidad, Testing y Documentación
+- **Selenium/Cypress**: Suite completa de **Tests End-to-End** que verifican el Login, Registro y CRUD de artículos.
+- **Documentación API**: Totalmente integrada con **Swagger** (disponible en `/api-docs`).
+- **JSDoc**: Código documentado bajo el estándar de JavaScript de Google.
+- **CI/CD Pipeline**: Configurado vía **GitHub Actions** para pasar tests y validar el build automáticamente en cada push.
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
 
-| Stack | Tecnologías |
+| Capa | Tecnologías |
 |---|---|
-| **Frontend** | React 19, Vite, React Router 7, React Hot Toast, CSS3 Moderno |
+| **Frontend** | React 19, Vite, React Router 7, React Hot Toast |
 | **Backend** | Node.js, Express, Sequelize, Mongoose |
-| **Bases de Datos** | MySQL, MongoDB |
-| **Testing** | Cypress |
-| **Seguridad** | JWT, Bcrypt, Helmet, Express-Rate-Limit, XSS-Clean |
+| **Seguridad** | JWT, Refresh Tokens, Bcrypt, Helmet, XSS-Clean |
+| **Bases de Datos** | MariaDB/MySQL, MongoDB Atlas |
+| **DevOps** | GitHub Actions, Vercel (Front), Render (Back) |
 
 ---
 
-## 💻 Instalación Local
+## 💻 Guía de Despliegue (Costo $0)
 
-### Requisitos Previos
-- Node.js instalado.
-- Instancias de MySQL y MongoDB corriendo localmente.
+Este proyecto está listo para ser desplegado en **Vercel** y **Render** en menos de 5 minutos:
 
-### 1. Clonar el repositorio
-```bash
-git clone https://github.com/TU_USUARIO/TU_REPO.git
-cd practicas
-```
-
-### 2. Configurar el Backend
-```bash
-cd Revista_Back/backend
-npm install
-# Crea un archivo .env basado en la configuración del servidor
-npm start
-```
-
-### 3. Configurar el Frontend
-```bash
-cd ../../Revista_Front/frontend
-npm install
-npm run dev
-```
+1.  **Backend (Render)**:
+    - Root Directory: `Revista_Back/backend`
+    - Configurar variables de `.env.example`.
+2.  **Frontend (Vercel)**:
+    - Root Directory: `Revista_Front/frontend`
+    - Variable `VITE_API_URL` apuntando a Render.
 
 ---
 
-## 🧪 Ejecutar Tests
-Para asegurar que todo funciona correctamente:
-```bash
-# Dentro de la carpeta frontend
-npm run cypress:open
-```
+## 💻 Desarrollo Local
+Si quieres probarlo en local, solo necesitas clonar y hacer `npm install`. Gracias a los **fallbacks** que he implementado, se conectará a tu MySQL y MongoDB local por defecto sin necesidad de configurar nada extra.
 
 ---
-
-## 🌐 Despliegue
-Esta aplicación está preparada para ser desplegada en **Vercel** (Frontend) y **Render** (Backend), utilizando **MongoDB Atlas** y servicios de MySQL en la nube para una disponibilidad del 100% sin costes.
-
----
-
-Desarrollado con  para las prácticas de Desarrollo Web.
+*Proyecto finalizado con arquitectura profesional para el portafolio de Desarrollo Web.*
