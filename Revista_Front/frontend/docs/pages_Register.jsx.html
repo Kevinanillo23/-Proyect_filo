@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Register.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Register.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/register.css";
+
+/**
+ * Componente Register - Maneja el registro de usuarios
+ * @component
+ * @returns {JSX.Element} Formulario de registro
+ */
+function Register() {
+  /** @type {[{ firstname: string, lastname: string, email: string, username: string, password: string }, Function]} */
+  const [form, setForm] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    username: "",
+    password: "",
+  });
+
+  /** @type {[string, Function]} */
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
+
+  /**
+   * Maneja cambios en inputs
+   * @param {React.ChangeEvent&lt;HTMLInputElement>} e Evento de cambio
+   */
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  /**
+   * Valida un email
+   * @param {string} email Email a validar
+   * @returns {boolean} True si es válido
+   */
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  /**
+   * Valida la contraseña (min 5 caracteres, 1 mayúscula, 1 número)
+   * @param {string} password Contraseña a validar
+   * @returns {boolean} True si es válida
+   */
+  const validatePassword = (password) =>
+    /^(?=.*[A-Z])(?=.*\d).{5,}$/.test(password);
+
+  /**
+   * Maneja submit del formulario de registro
+   * @async
+   * @param {React.FormEvent&lt;HTMLFormElement>} e Evento submit
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateEmail(form.email)) {
+      return setMessage("Introduce un email válido.");
+    }
+
+    if (!validatePassword(form.password)) {
+      return setMessage(
+        "La contraseña debe tener mínimo 5 caracteres, una mayúscula y un número."
+      );
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          sessionStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        setMessage("Registro exitoso");
+        navigate("/");
+      } else {
+        setMessage(data.error || "Error en el registro");
+      }
+    } catch (err) {
+      setMessage("Error al conectar con el backend");
+    }
+  };
+
+  return (
+    &lt;div>
+      &lt;h2>Register&lt;/h2>
+      &lt;form onSubmit={handleSubmit}>
+        &lt;input
+          name="firstname"
+          placeholder="Firstname"
+          onChange={handleChange}
+          required
+        />
+        &lt;br />
+        &lt;input
+          name="lastname"
+          placeholder="Lastname"
+          onChange={handleChange}
+          required
+        />
+        &lt;br />
+        &lt;input
+          name="email"
+          placeholder="Email"
+          type="email"
+          onChange={handleChange}
+          required
+        />
+        &lt;br />
+        &lt;input
+          name="username"
+          placeholder="Username"
+          onChange={handleChange}
+          required
+        />
+        &lt;br />
+        &lt;input
+          name="password"
+          type="password"
+          placeholder="Password"
+          onChange={handleChange}
+          required
+        />
+        &lt;br />
+        &lt;button type="submit">Register&lt;/button>
+      &lt;/form>
+      {message &amp;&amp; &lt;p>{message}&lt;/p>}
+    &lt;/div>
+  );
+}
+
+export default Register;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Components_ArticleForm.html">Components/ArticleForm</a></li><li><a href="module-Components_ArticleItem.html">Components/ArticleItem</a></li><li><a href="module-Components_ArticleList.html">Components/ArticleList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Article">Article</a></li><li><a href="global.html#Filosofia">Filosofia</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Podcast">Podcast</a></li><li><a href="global.html#Portal">Portal</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#ResetPassword">ResetPassword</a></li><li><a href="global.html#Revista">Revista</a></li><li><a href="global.html#colecciones">colecciones</a></li><li><a href="global.html#createArticle">createArticle</a></li><li><a href="global.html#deleteArticle">deleteArticle</a></li><li><a href="global.html#ediciones">ediciones</a></li><li><a href="global.html#fetchArticles">fetchArticles</a></li><li><a href="global.html#libros">libros</a></li><li><a href="global.html#podcasts">podcasts</a></li><li><a href="global.html#updateArticle">updateArticle</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Sep 23 2025 10:53:47 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

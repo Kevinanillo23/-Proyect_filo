@@ -1,0 +1,77 @@
+.filosofia-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #222;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    text-align: center;
+    color: #555;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+  
+  .libros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+  }
+  
+  .libro-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .libro-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .libro-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+  
+  .libro-info {
+    padding: 15px;
+  }
+  
+  .libro-info h2 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .libro-info .autor {
+    font-size: 0.95rem;
+    color: #777;
+    margin-bottom: 15px;
+  }
+  
+  .btn-leer {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+  }
+  
+  .btn-leer:hover {
+    background-color: #0056b3;
+  }
+  

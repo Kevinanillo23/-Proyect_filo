@@ -1,0 +1,77 @@
+.portal-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+  
+  .colecciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+  }
+  
+  .coleccion-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .coleccion-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .coleccion-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .coleccion-info {
+    padding: 15px;
+    text-align: left;
+  }
+  
+  .coleccion-info h2 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  
+  .coleccion-info p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  .leer-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .leer-btn:hover {
+    background-color: #0056b3;
+  }
+  
