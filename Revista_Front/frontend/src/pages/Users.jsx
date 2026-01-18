@@ -47,7 +47,7 @@ function Users() {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const data = await fetchUsers(token);
+        const data = await fetchUsers();
         setUsers(data);
       } catch (err) {
         console.error(err);
@@ -65,10 +65,10 @@ function Users() {
   const handleSubmit = async () => {
     try {
       if (editingId) {
-        await updateUser(token, editingId, newUser);
+        await updateUser(editingId, newUser);
         toast.success("Usuario actualizado correctamente");
       } else {
-        await createUser(token, newUser);
+        await createUser(newUser);
         toast.success("Usuario creado con éxito");
       }
 
@@ -82,7 +82,7 @@ function Users() {
       });
       setEditingId(null);
 
-      const data = await fetchUsers(token);
+      const data = await fetchUsers();
       setUsers(data);
     } catch (err) {
       toast.error(err.message || "Error al procesar el usuario");
@@ -113,7 +113,7 @@ function Users() {
   const handleDelete = async (id) => {
     setDeletingId(id);
     try {
-      await deleteUser(token, id);
+      await deleteUser(id);
       setUsers((prev) => prev.filter((u) => u.id !== id));
       toast.success("Usuario eliminado");
     } catch (err) {

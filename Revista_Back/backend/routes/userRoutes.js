@@ -83,6 +83,33 @@ router.post("/login", userController.login);
 
 /**
  * @swagger
+ * /users/refresh-token:
+ *   post:
+ *     summary: Renovar el token de acceso
+ *     tags: [Usuarios]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Nuevo token de acceso generado
+ *       401:
+ *         description: Refresh token requerido
+ *       403:
+ *         description: Token inválido o expirado
+ */
+router.post("/refresh-token", userController.refreshToken);
+
+/**
+ * @swagger
  * /users/forgot-password:
  *   post:
  *     summary: Enviar enlace de restablecimiento de contraseña

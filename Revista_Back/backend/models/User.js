@@ -47,6 +47,10 @@ const User = sequelize.define("User", {
     type: DataTypes.ENUM("user", "admin"),
     allowNull: false,
     defaultValue: "user"
+  },
+  refreshToken: {
+    type: DataTypes.TEXT,
+    allowNull: true
   }
 }, {
   tableName: "users",

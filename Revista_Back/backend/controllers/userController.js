@@ -6,6 +6,21 @@ const { validateEmail, validatePassword } = require("../utils/validators");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "tu_secreto_super_seguro";
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "tu_secreto_refresh_super_seguro";
+
+/**
+ * Generar Access Token
+ */
+const generateAccessToken = (user) => {
+  return jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "15m" });
+};
+
+/**
+ * Generar Refresh Token
+ */
+const generateRefreshToken = (user) => {
+  return jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
+};
 
 /**
  * Registrar un nuevo usuario
@@ -68,16 +83,50 @@ exports.login = async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: "Contraseña incorrecta" });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // Guardar refresh token en la DB
+    await user.update({ refreshToken });
 
     res.json({
       message: "Login exitoso",
-      token,
+      accessToken,
+      refreshToken,
       user: { id: user.id, username: user.username, role: user.role }
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al iniciar sesión" });
+  }
+};
+
+/**
+ * Renovar Access Token usando Refresh Token
+ * @async
+ * @function refreshToken
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ */
+exports.refreshToken = async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(401).json({ error: "Refresh Token requerido" });
+
+  try {
+    const user = await User.findOne({ where: { refreshToken } });
+    if (!user) return res.status(403).json({ error: "Refresh Token inválido o expirado" });
+
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err || user.id !== decoded.id) {
+        return res.status(403).json({ error: "Token inválido" });
+      }
+
+      const accessToken = generateAccessToken(user);
+      res.json({ accessToken });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al renovar token" });
   }
 };
 

@@ -33,7 +33,7 @@ function Article() {
   useEffect(() => {
     const getArticles = async () => {
       try {
-        const data = await fetchArticles(token);
+        const data = await fetchArticles();
         // data ahora es { articles: [], totalPages: ... }
         setArticles(data.articles || []);
       } catch (err) {
@@ -55,16 +55,16 @@ function Article() {
     }
     try {
       if (editingId) {
-        await updateArticle(token, editingId, newArticle);
+        await updateArticle(editingId, newArticle);
         toast.success("Artículo actualizado correctamente");
       } else {
-        await createArticle(token, newArticle);
+        await createArticle(newArticle);
         toast.success("Artículo creado con éxito");
       }
       setNewArticle({ title: "", content: "", url: "" });
       setEditingId(null);
 
-      const data = await fetchArticles(token);
+      const data = await fetchArticles();
       setArticles(data.articles || []);
     } catch (err) {
       toast.error(err.message);
@@ -91,7 +91,7 @@ function Article() {
   const handleDelete = async (id) => {
     setDeletingId(id);
     try {
-      await deleteArticle(token, id);
+      await deleteArticle(id);
       setArticles((prev) => prev.filter((a) => a._id !== id));
       toast.success("Artículo eliminado");
     } catch (err) {
