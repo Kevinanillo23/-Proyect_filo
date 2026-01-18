@@ -18,10 +18,12 @@ import ArticleDetail from "./pages/ArticleDetail";
 import Users from "./pages/Users"; // 👈 nueva ruta de gestión de usuarios
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
+import PhilosophyBackground from "./components/PhilosophyBackground";
 
 function App() {
   return (
     <>
+      <PhilosophyBackground />
       <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
 

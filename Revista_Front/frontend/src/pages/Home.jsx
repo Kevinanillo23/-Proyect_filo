@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../styles/home.css";
 import { API_BASE_URL } from "../config";
 import PageTransition from "../components/PageTransition";
+import HeroCarousel from "../components/HeroCarousel";
 
 /**
  * Componente Home - Página principal con lista de artículos recientes
@@ -36,11 +37,12 @@ function Home() {
 
   return (
     <PageTransition>
-      <div className="home-container">
+      <HeroCarousel />
+      <div className="home-container" style={{ marginTop: '80px' }}>
         <h1>Actualidad Filosófica</h1>
 
         {articles.length === 0 ? (
-          <p>No hay artículos disponibles.</p>
+          <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No hay artículos disponibles.</p>
         ) : (
           <div className="news-grid">
             {articles.map((article) => (
