@@ -17,9 +17,10 @@ function Home() {
    */
   const fetchArticles = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/articles`);
+      const res = await fetch(`${API_BASE_URL}/api/articles?limit=6`);
       const data = await res.json();
-      setArticles(data);
+      // Ahora data es un objeto { articles, totalPages, ... }
+      setArticles(data.articles || []);
     } catch (err) {
       console.error("Error al obtener artículos:", err);
     } finally {

@@ -10,8 +10,22 @@ const Article = require("../models/Article.js");
  */
 exports.getAllArticles = async (req, res) => {
   try {
-    const articles = await Article.find().sort({ createdAt: -1 });
-    res.json(articles);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Article.countDocuments();
+    const articles = await Article.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      articles,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      totalArticles: total
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error al obtener los artículos" });
@@ -47,7 +61,7 @@ exports.getArticleById = async (req, res) => {
  */
 exports.createArticle = async (req, res) => {
   try {
-    const { title, content, url } = req.body; 
+    const { title, content, url } = req.body;
     const newArticle = new Article({ title, content, url: url || null });
     await newArticle.save();
     res.json({ message: "Artículo creado correctamente", article: newArticle });
@@ -67,7 +81,7 @@ exports.createArticle = async (req, res) => {
  */
 exports.updateArticle = async (req, res) => {
   try {
-    const { title, content, url } = req.body; 
+    const { title, content, url } = req.body;
     const article = await Article.findByIdAndUpdate(
       req.params.id,
       { title, content, url: url || null },

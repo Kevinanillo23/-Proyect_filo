@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import "../styles/article.css";
 import toast from "react-hot-toast";
 import {
@@ -30,23 +31,28 @@ function Article() {
    * Carga los artículos al montar el componente
    */
   useEffect(() => {
-    const loadArticles = async () => {
+    const getArticles = async () => {
       try {
         const data = await fetchArticles(token);
-        setArticles(data);
+        // data ahora es { articles: [], totalPages: ... }
+        setArticles(data.articles || []);
       } catch (err) {
-        console.error(err);
+        toast.error(err.message);
       } finally {
         setLoading(false);
       }
     };
-    loadArticles();
+    getArticles();
   }, [token]);
 
   /**
    * Maneja la creación o actualización de un artículo
    */
   const handleSubmit = async () => {
+    if (!newArticle.title || !newArticle.content) {
+      toast.error("Título y contenido son obligatorios");
+      return;
+    }
     try {
       if (editingId) {
         await updateArticle(token, editingId, newArticle);
@@ -59,9 +65,9 @@ function Article() {
       setEditingId(null);
 
       const data = await fetchArticles(token);
-      setArticles(data);
+      setArticles(data.articles || []);
     } catch (err) {
-      toast.error(err.message || "Error al procesar el artículo");
+      toast.error(err.message);
     }
   };
 
