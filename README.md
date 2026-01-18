@@ -83,4 +83,4 @@ Esta aplicación está preparada para ser desplegada en **Vercel** (Frontend) y 
 
 ---
 
-Desarrollado con ❤️ para las prácticas de Desarrollo Web.
+Desarrollado con  para las prácticas de Desarrollo Web.
