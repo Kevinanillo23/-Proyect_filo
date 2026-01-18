@@ -1,97 +1,97 @@
-
 .article-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-    font-family: 'Arial', sans-serif;
-    color: #333;
-    line-height: 1.6;
-  }
-  
-  
-  .article-container h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
+  max-width: 1200px;
+  margin: 120px auto 40px;
+  padding: 0 24px;
+}
 
-  .article-container h2,
-  .article-container h3 {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: #222;
-  }
-  
- 
-  .article-container p {
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-  }
-  
- 
-  .article-container img {
-    width: 100%;
-    height: auto;
-    margin: 1.5rem 0;
-    border-radius: 8px;
-  }
-  
-  
-  .article-container a {
-    display: inline-block;
-    color: #f7b500;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 1rem;
-    transition: color 0.3s ease;
-  }
-  
-  .article-container a:hover {
-    color: #e69500;
-    text-decoration: underline;
-  }
-  
-  
-  .news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  
+.article-container h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  color: #fff;
+  border-left: 6px solid var(--primary);
+  padding-left: 20px;
+}
 
-  .card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Admin Dashboard Sections */
+.article-form-section {
+  margin-bottom: 60px;
+  padding: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+}
+
+.article-list-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Individual Article Row (List view) */
+.article-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.article-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(5px);
+}
+
+.article-row img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.article-row-info {
+  flex-grow: 1;
+}
+
+.article-row-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.article-row-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-edit {
+  background: rgba(241, 196, 15, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(241, 196, 15, 0.2);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .article-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-  }
-  
-  .card img {
+
+  .article-row img {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
+    height: 150px;
   }
-  
-  .card-content {
-    padding: 1rem;
-  }
-  
-  .card-content h3 {
-    margin-bottom: 0.5rem;
-  }
-  
-  .card-content p {
-    font-size: 0.95rem;
-    color: #555;
-  }
-  
+}

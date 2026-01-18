@@ -1,139 +1,143 @@
-
 .navbar {
   width: 100%;
-  background-color: #111; 
-  color: #fff;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-main);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  border-bottom: 1px solid var(--border-glass);
+  transition: all 0.3s ease;
 }
 
 .navbar-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
-  height: 60px;
+  padding: 0 32px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-
 .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #fff;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
   text-decoration: none;
+  letter-spacing: -0.05em;
+  transition: var(--transition-fast);
 }
 
+.logo:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 20px; 
+  gap: 8px;
   list-style: none;
-  transition: transform 0.3s ease;
 }
 
 .nav-links li a,
 .nav-links li button {
-  color: #fff;
+  color: var(--text-muted);
   text-decoration: none;
-  font-size: 1rem;
-  padding: 8px 12px;
-  transition: background 0.3s, color 0.3s;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  transition: var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 6px;
+  background: transparent;
   border: none;
-  background: none;
   cursor: pointer;
+  position: relative;
 }
 
 .nav-links li a:hover,
 .nav-links li button:hover {
-  background-color: #f1c40f; 
-  color: #111;
-  border-radius: 5px;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-
-.btn-register {
-  background-color: #f1c40f;
-  color: #111;
-  padding: 8px 16px;
-  border-radius: 5px;
-  font-weight: bold;
+.nav-links li a::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
-.btn-register:hover {
-  background-color: #d4ac0d;
+.nav-links li a:hover::after {
+  transform: scaleX(1);
 }
 
 .btn-logout {
-  background-color: #e74c3c;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 5px;
-  font-weight: bold;
+  background: rgba(231, 76, 60, 0.1) !important;
+  color: #e74c3c !important;
+  border: 1px solid rgba(231, 76, 60, 0.2) !important;
 }
 
 .btn-logout:hover {
-  background-color: #c0392b;
+  background: #e74c3c !important;
+  color: white !important;
 }
 
+.navbar-user {
+  margin-left: 20px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-left: 1px solid var(--border-glass);
+  padding-left: 20px;
+}
 
+/* Hamburger & Responsive */
 .hamburger {
   display: none;
   flex-direction: column;
-  cursor: pointer;
-  gap: 4px;
+  gap: 5px;
+  width: 30px;
+  z-index: 1001;
 }
 
 .hamburger .bar {
-  width: 25px;
-  height: 3px;
-  background-color: #fff;
-  transition: 0.3s;
-}
-
-
-.overlay {
-  display: none;
-  position: fixed;
-  top: 60px;
-  left: 0;
+  height: 2px;
   width: 100%;
-  height: calc(100% - 60px);
-  background: rgba(0,0,0,0.5);
-  z-index: 900;
+  background-color: var(--text-main);
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
-
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .hamburger {
     display: flex;
   }
 
   .nav-links {
     position: fixed;
-    top: 60px;
-    left: -100%;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: var(--bg-dark);
     flex-direction: column;
-    width: 250px;
-    height: calc(100% - 60px);
-    background-color: #111;
-    padding: 20px;
-    gap: 15px;
-    transition: left 0.3s ease;
-    z-index: 950;
+    justify-content: center;
+    padding: 40px;
+    transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
   }
 
   .nav-links.active {
-    left: 0;
-  }
-
-  .overlay.active {
-    display: block;
+    right: 0;
   }
 }

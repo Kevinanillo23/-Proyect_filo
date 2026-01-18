@@ -6,7 +6,7 @@ const { validateEmail, validatePassword } = require("../utils/validators");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "tu_secreto_super_seguro";
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "tu_secreto_refresh_super_seguro";
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "tu_secreto_refresh_super_seguro_local";
 
 /**
  * Generar Access Token
@@ -24,21 +24,18 @@ const generateRefreshToken = (user) => {
 
 /**
  * Registrar un nuevo usuario
- * @async
- * @function register
- * @param {import("express").Request} req
- * @param {import("express").Response} res
  */
 exports.register = async (req, res) => {
   try {
     const { firstname, lastname, email, username, password, role } = req.body;
+    console.log("Intentando registrar usuario:", { username, email });
 
     if (!validateEmail(email)) {
       return res.status(400).json({ error: "El email no es válido" });
     }
     if (!validatePassword(password)) {
       return res.status(400).json({
-        error: "La contraseña debe tener mínimo 5 caracteres, al menos una mayúscula y un número"
+        error: "La contraseña debe tener mínimo 5 caracteres, una mayúscula y un número"
       });
     }
 
@@ -56,13 +53,15 @@ exports.register = async (req, res) => {
       role: role || "user"
     });
 
+    console.log("Usuario creado con éxito en MySQL:", newUser.id);
+
     res.json({
       message: "Usuario registrado correctamente",
       user: { id: newUser.id, username: newUser.username, role: newUser.role }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al registrar usuario" });
+    console.error("ERROR DETALLADO EN REGISTRO:", error);
+    res.status(500).json({ error: "Error al registrar usuario: " + error.message });
   }
 };
 

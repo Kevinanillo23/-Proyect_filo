@@ -1,78 +1,172 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Dynamic Color Palette */
+  --primary: #f1c40f;
+  --primary-hover: #d4ac0d;
+  --bg-dark: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  /* Spacing & Borders */
+  --radius: 12px;
+  --transition-fast: 0.2s ease;
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f8f8f8;
-  color: #111;
+  box-sizing: border-box;
 }
 
-h1, h2, h3 {
-  color: #111;
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+  /* Animación de entrada global */
+  animation: fadeIn 0.6s ease-out;
 }
 
-/* Contenedores principales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1,
+h2,
+h3,
+.logo {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius);
+}
+
+/* Layout */
 .main-content {
-  max-width: 1200px;
-  margin: 80px auto 40px; /* espacio para navbar */
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+  max-width: 1280px;
+  margin: 100px auto 40px;
+  padding: 0 24px;
 }
 
-/* Cards generales */
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(241, 196, 15, 0.3);
+}
+
+/* Grid for Articles */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 40px;
 }
 
+/* Premium Card Design */
 .card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  transition: var(--transition-slow);
+  position: relative;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  transform: translateY(-8px) scale(1.02);
 }
 
 .card img {
   width: 100%;
-  height: auto;
+  height: 220px;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover img {
+  transform: scale(1.1);
 }
 
 .card-content {
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 24px;
 }
 
 .card-content h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #111;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  color: var(--text-main);
 }
 
 .card-content p {
-  margin: 0;
+  color: var(--text-muted);
   font-size: 0.95rem;
-  color: #333;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.card-content a {
-  color: #f1c40f;
-  text-decoration: none;
-  font-weight: bold;
+/* Forms Style */
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
 }
 
-.card-content a:hover {
-  text-decoration: underline;
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }

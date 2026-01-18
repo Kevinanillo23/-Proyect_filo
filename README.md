@@ -69,4 +69,4 @@ Este proyecto está listo para ser desplegado en **Vercel** y **Render** en meno
 Si quieres probarlo en local, solo necesitas clonar y hacer `npm install`. Gracias a los **fallbacks** que he implementado, se conectará a tu MySQL y MongoDB local por defecto sin necesidad de configurar nada extra.
 
 ---
-*Proyecto finalizado con arquitectura profesional para el portafolio de Desarrollo Web.*
+

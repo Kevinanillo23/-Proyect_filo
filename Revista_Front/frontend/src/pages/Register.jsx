@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/register.css";
 import { API_BASE_URL } from "../config";
+import PageTransition from "../components/PageTransition";
 
 /**
  * Componente Register - Maneja el registro de usuarios
@@ -88,50 +89,81 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="firstname"
-          placeholder="Firstname"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          name="lastname"
-          placeholder="Lastname"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          name="email"
-          placeholder="Email"
-          type="email"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          name="username"
-          placeholder="Username"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <button type="submit">Register</button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
+    <PageTransition>
+      <div className="auth-page">
+        <div className="auth-card">
+          <h2>Suscribirse</h2>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              <div>
+                <label>Nombre</label>
+                <input
+                  name="firstname"
+                  placeholder="Ej: Juan"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div>
+                <label>Apellidos</label>
+                <input
+                  name="lastname"
+                  placeholder="Ej: Pérez"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label>Email Profesional</label>
+              <input
+                name="email"
+                placeholder="tu@email.com"
+                type="email"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label>Nombre de Usuario</label>
+              <input
+                name="username"
+                placeholder="usuario123"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label>Contraseña Segura</label>
+              <input
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>
+              Crear Cuenta
+            </button>
+          </form>
+
+          {message && (
+            <p className={message === "Registro exitoso" ? "success-message" : "error-message"} style={{ marginTop: '20px' }}>
+              {message}
+            </p>
+          )}
+
+          <div className="auth-footer">
+            <p>¿Ya tienes cuenta? <a href="/login" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Inicia Sesión</a></p>
+          </div>
+        </div>
+      </div>
+    </PageTransition>
   );
 }
 

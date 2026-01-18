@@ -30,28 +30,41 @@ function ArticleForm({ newArticle, setNewArticle, onSubmit, editing }) {
   };
 
   return (
-    <div className="article-form">
-      <input
-        name="title"
-        placeholder="Título"
-        value={newArticle.title}
-        onChange={handleChange}
-      />
-      <textarea
-        name="content"
-        placeholder="Contenido"
-        value={newArticle.content}
-        onChange={handleChange}
-      />
-      <input
-        name="url"
-        placeholder="URL de la imagen (opcional)"
-        value={newArticle.url || ""}
-        onChange={handleChange}
-      />
-      <button onClick={onSubmit}>
-        {editing ? "Actualizar Artículo" : "Crear Artículo"}
-      </button>
+    <div className="article-form-section">
+      <h2 style={{ marginTop: 0, marginBottom: '25px' }}>{editing ? "Editar Artículo" : "Nuevo Artículo"}</h2>
+      <div className="article-form">
+        <div>
+          <label>Título del Artículo</label>
+          <input
+            name="title"
+            placeholder="Ej: El pensamiento de Heidegger"
+            value={newArticle.title}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Contenido / Cuerpo</label>
+          <textarea
+            name="content"
+            placeholder="Escribe el contenido aquí..."
+            value={newArticle.content}
+            onChange={handleChange}
+            style={{ minHeight: '150px' }}
+          />
+        </div>
+        <div>
+          <label>Imagen de Portada (URL)</label>
+          <input
+            name="url"
+            placeholder="https://ejemplo.com/imagen.jpg"
+            value={newArticle.url || ""}
+            onChange={handleChange}
+          />
+        </div>
+        <button className="btn-primary" onClick={onSubmit} style={{ width: '100%' }}>
+          {editing ? "Guardar Cambios" : "Publicar Artículo"}
+        </button>
+      </div>
     </div>
   );
 }

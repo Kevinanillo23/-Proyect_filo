@@ -5,8 +5,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const mongoSanitize = require("express-mongo-sanitize");
-const xss = require("xss-clean");
 const hpp = require("hpp");
 require("dotenv").config();
 
@@ -43,13 +41,7 @@ app.use("/api/", limiter);
 // 4. Body Parser: Limitar el tamaño de los datos de entrada
 app.use(express.json({ limit: "10kb" }));
 
-// 5. Sanitización de datos contra Inyección NoSQL (MongoDB)
-app.use(mongoSanitize());
-
-// 6. Sanitización de datos contra XSS (Cross-Site Scripting)
-app.use(xss());
-
-// 7. HPP: Prevenir contaminación de parámetros HTTP
+// 5. HPP: Prevenir contaminación de parámetros HTTP
 app.use(hpp());
 
 /**
@@ -63,7 +55,7 @@ const connectMySQL = async () => {
   try {
     await sequelize.authenticate();
     console.log("Conexión establecida con MySQL");
-    await sequelize.sync({ alter: false, force: false });
+    await sequelize.sync({ alter: true });
     console.log("Tablas sincronizadas en MySQL");
   } catch (err) {
     console.error("Error al conectar con MySQL:", err);

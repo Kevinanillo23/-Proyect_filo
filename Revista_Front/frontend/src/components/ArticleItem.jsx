@@ -31,41 +31,35 @@ const ArticleItem = ({ article, isAdmin, onEdit, onDelete, isDeleting }) => {
   };
 
   return (
-    <article className="article-item">
-      {article.url && (
-        <div className="article-image-preview">
-          <img src={article.url} alt={article.title} />
-        </div>
-      )}
-      <div className="article-content">
+    <div className="article-row">
+      <img src={article.url || "https://via.placeholder.com/80"} alt={article.title} />
+
+      <div className="article-row-info">
         <h3>{article.title}</h3>
-        <p className="article-meta">
-          Publicado el {new Date(article.createdAt).toLocaleDateString()}
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          ID: {article._id.slice(-6)} • {new Date(article.createdAt).toLocaleDateString()}
         </p>
-        <div className="article-body">
-          {article.content}
-        </div>
       </div>
 
       {isAdmin && (
-        <div className="article-actions">
+        <div className="article-row-actions">
           <button
-            className="edit-btn"
+            className="btn-edit"
             onClick={() => onEdit(article)}
             disabled={isDeleting}
           >
             Editar
           </button>
           <button
-            className="delete-btn"
+            className="btn-delete"
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? 'Eliminando...' : 'Eliminar'}
+            {isDeleting ? '...' : 'Eliminar'}
           </button>
         </div>
       )}
-    </article>
+    </div>
   );
 };
 

@@ -9,6 +9,7 @@ import {
 } from "../utils/articleUtils";
 import ArticleForm from "../components/ArticleForm";
 import ArticleList from "../components/ArticleList";
+import PageTransition from "../components/PageTransition";
 
 /**
  * Componente Article - Página de gestión de artículos.
@@ -104,26 +105,28 @@ function Article() {
   if (loading) return <p>Cargando artículos...</p>;
 
   return (
-    <div className="article-container">
-      <h1>Artículos</h1>
+    <PageTransition>
+      <div className="article-container">
+        <h1>Artículos</h1>
 
-      {isAdmin && (
-        <ArticleForm
-          newArticle={newArticle}
-          setNewArticle={setNewArticle}
-          onSubmit={handleSubmit}
-          editing={!!editingId}
+        {isAdmin && (
+          <ArticleForm
+            newArticle={newArticle}
+            setNewArticle={setNewArticle}
+            onSubmit={handleSubmit}
+            editing={!!editingId}
+          />
+        )}
+
+        <ArticleList
+          articles={articles}
+          isAdmin={isAdmin}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          deletingId={deletingId}
         />
-      )}
-
-      <ArticleList
-        articles={articles}
-        isAdmin={isAdmin}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        deletingId={deletingId}
-      />
-    </div>
+      </div>
+    </PageTransition>
   );
 }
 

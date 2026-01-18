@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import toast from "react-hot-toast";
 import { API_BASE_URL } from "../config";
+import PageTransition from "../components/PageTransition";
 
 /**
  * Componente Login - Maneja autenticación y reseteo de contraseña.
@@ -121,63 +122,81 @@ function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="username"
-          placeholder="Username"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-
-      {message && <p>{message}</p>}
-
-      <p>
-        <button
-          type="button"
-          className="forgot-link"
-          onClick={() => setShowModal(true)}
-        >
-          ¿Olvidaste tu contraseña?
-        </button>
-      </p>
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Restablecer contraseña</h3>
-            <form onSubmit={handleResetSubmit}>
+    <PageTransition>
+      <div className="auth-page">
+        <div className="auth-card">
+          <h2>Ingresar</h2>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <div>
+              <label>Usuario</label>
               <input
-                type="email"
-                placeholder="Introduce tu correo"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
+                name="username"
+                placeholder="Nombre de usuario"
+                onChange={handleChange}
                 required
               />
-              <button type="submit">Enviar enlace</button>
-            </form>
-            <button className="close-btn" onClick={() => setShowModal(false)}>
-              Cerrar
+            </div>
+            <div>
+              <label>Contraseña</label>
+              <input
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>
+              Acceder
             </button>
-          </div>
-        </div>
-      )}
+          </form>
 
-      {resetMessage && <p className="success-message">{resetMessage}</p>}
-      {resetError && <p className="error-message">{resetError}</p>}
-    </div>
+          {message && <p className="error-message" style={{ marginTop: '15px' }}>{message}</p>}
+
+          <div className="auth-footer">
+            <p>
+              <button
+                type="button"
+                className="forgot-link"
+                style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: '600' }}
+                onClick={() => setShowModal(true)}
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </p>
+            <p style={{ marginTop: '10px' }}>
+              ¿Sin cuenta? <a href="/register">Suscríbete ahora</a>
+            </p>
+          </div>
+
+          {showModal && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h2>Restablecer</h2>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>Introduce tu email para recibir el enlace.</p>
+                <form onSubmit={handleResetSubmit} className="auth-form">
+                  <input
+                    type="email"
+                    placeholder="tu@email.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                  />
+                  <button type="submit" className="btn-primary" style={{ width: '100%' }}>Enviar enlace</button>
+                </form>
+                <button
+                  className="close-btn"
+                  style={{ marginTop: '15px', padding: '8px', width: '100%', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                  onClick={() => setShowModal(false)}
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </PageTransition>
   );
 }
 
