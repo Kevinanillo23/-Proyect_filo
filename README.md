@@ -15,28 +15,33 @@ Bienvenido a **Filosofía&Co**, una plataforma profesional de alta gama diseñad
   - **XSS & NoSQL Injection**: Sanitización total de todas las entradas del usuario.
   - **HPP**: Protección contra contaminación de parámetros.
 
-### **2. �️ Arquitectura Dual de Bases de Datos**
+### **2. 🗄️ Arquitectura Dual de Bases de Datos**
 - **MySQL (Sequelize)**: Gestiona la estructura relacional de los **Usuarios y Roles**, garantizando integridad referencial.
-- **MongoDB (Mongoose)**: Maneja los **Artículos y Contenido** de forma flexible y escalable, permitiendo metadatos variables.
+- **MongoDB (Mongoose)**: Maneja los **Artículos y Contenido** de forma flexible y escalable, permitiendo metadatos variables y arrays de comentarios.
 
-### **3. � Escalabilidad & Performance**
+### **3. ⚡ Escalabilidad & Performance**
 - **Paginación Backend**: La API de artículos soporta paginación real (`limit` y `page`), evitando sobrecargar la red.
 - **Carga Optimizada**: El frontend solicita solo el contenido necesario (Ej: los 6 artículos más recientes en Home).
 - **Hybrid Configuration**: El código detecta automáticamente si estás en `local` o `producción`, configurando las bases de datos y la API sin intervención manual.
 
 ### **4. 🛡️ Experiencia de Usuario (UX) e Interfaz**
-- **Rutas Protegidas**: Sistema de seguridad en el cliente que bloquea paneles de administración basándose en el rol del JWT.
-- **Sistema de Toasts**: Feedback visual premium con `react-hot-toast` para todas las acciones CRUD.
-- **Gestión de Imágenes**: Soporte para URLs dinámicas con previsualización en el panel de administrador.
-- **Confirmación de Seguridad**: Diálogos de confirmación antes de eliminaciones críticas.
+- **Diseño Glassmorphism**: Interfaz moderna con efectos de desenfoque y transparencias.
+- **Buscador Inteligente**: Búsqueda en tiempo real de artículos con lógica *fuzzy* en el backend.
+- **Interacción Social**: Sistema de **Comentarios** completo, permitiendo a los usuarios registrados participar en discusiones.
+- **Feedback Premium**: Sistema de Toasts (`react-hot-toast`) y transiciones suaves entre páginas.
+- **Footer & Navegación**: Estructura completa de navegación con pie de página responsivo.
+
+### **5. 🔍 SEO y Visibilidad**
+- **Meta Etiquetas Avanzadas**: Implementación de Open Graph (Facebook/LinkedIn) y Twitter Cards para compartir contenido de forma atractiva.
+- **Semántica HTML5**: Estructura optimizada para motores de búsqueda.
 
 ---
 
 ## 🧪 Calidad, Testing y Documentación
-- **Selenium/Cypress**: Suite completa de **Tests End-to-End** que verifican el Login, Registro y CRUD de artículos.
+- **Cypress E2E Testing**: Suite completa que verifica Login, Registro, CRUD de artículos y flujo de comentarios.
 - **Documentación API**: Totalmente integrada con **Swagger** (disponible en `/api-docs`).
-- **JSDoc**: Código documentado bajo el estándar de JavaScript de Google.
-- **CI/CD Pipeline**: Configurado vía **GitHub Actions** para pasar tests y validar el build automáticamente en cada push.
+- **JSDoc**: Código documentado bajo el estándar de Google.
+- **CI/CD Pipeline**: Pipeline de GitHub Actions que valida automáticamente el *Linting* y el *Build* del frontend en cada push, asegurando que nada rompa producción.
 
 ---
 
@@ -69,4 +74,3 @@ Este proyecto está listo para ser desplegado en **Vercel** y **Render** en meno
 Si quieres probarlo en local, solo necesitas clonar y hacer `npm install`. Gracias a los **fallbacks** que he implementado, se conectará a tu MySQL y MongoDB local por defecto sin necesidad de configurar nada extra.
 
 ---
-
