@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import toast from "react-hot-toast";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL } from "../configuration";
 import PageTransition from "../components/PageTransition";
 
 /**

@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import "../styles/articleDetail.css";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL } from "../configuration";
 
 /**
  * Componente ArticleDetail

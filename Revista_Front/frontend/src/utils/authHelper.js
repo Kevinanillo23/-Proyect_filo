@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL } from "../configuration";
 
 /**
  * Helper para realizar peticiones autenticadas con auto-refresh

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL } from "../configuration";
 
 /**
  * Componente ResetPassword - Permite restablecer la contraseña con token
