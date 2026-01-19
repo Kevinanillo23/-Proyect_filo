@@ -12,10 +12,17 @@ exports.getAllArticles = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
     const skip = (page - 1) * limit;
 
-    const total = await Article.countDocuments();
-    const articles = await Article.find()
+    // Filtro de búsqueda (si existe 'search')
+    const filter = search
+      ? { title: { $regex: search, $options: "i" } } // Búsqueda insensible a mayúsculas
+      : {};
+
+    const total = await Article.countDocuments(filter);
+    const articles = await Article.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

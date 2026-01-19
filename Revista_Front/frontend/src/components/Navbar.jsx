@@ -87,6 +87,23 @@ function Navbar() {
             FILCO
           </Link>
 
+          <form className="search-form" onSubmit={(e) => {
+            e.preventDefault();
+            const query = e.target.search.value;
+            if (query.trim()) navigate(`/?search=${query}`);
+          }}>
+            <input
+              type="text"
+              name="search"
+              placeholder="Buscar..."
+              className="search-input"
+              autoComplete="off"
+            />
+            <button type="submit" className="search-btn">
+              🔍
+            </button>
+          </form>
+
           <div
             className={`hamburger ${isMenuOpen ? "active" : ""}`}
             onClick={toggleMenu}

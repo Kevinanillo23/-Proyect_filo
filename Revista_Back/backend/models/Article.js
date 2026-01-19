@@ -14,7 +14,14 @@ const articleSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
-    url: { type: String, default: null }, 
+    url: { type: String, default: null },
+    comments: [
+      {
+        username: { type: String, required: true },
+        text: { type: String, required: true },
+        date: { type: Date, default: Date.now }
+      }
+    ]
   },
   { timestamps: true }
 );

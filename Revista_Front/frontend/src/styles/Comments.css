@@ -1,0 +1,118 @@
+/* Comments Section */
+.comments-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comments-section h3 {
+    color: var(--primary);
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.comment-form {
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.comment-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    color: white;
+    min-height: 100px;
+    resize: vertical;
+    margin-bottom: 1rem;
+    font-family: inherit;
+}
+
+.comment-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.btn-comment {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-comment:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-comment:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.comment-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.comment-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.comment-author {
+    color: var(--secondary);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.comment-date {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.comment-text {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    color: var(--text-muted);
+}
+
+.login-prompt a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+}

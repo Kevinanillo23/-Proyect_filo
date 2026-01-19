@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/HomePage.css";
 import { API_BASE_URL } from "../configuration";
 import PageTransition from "../components/PageTransition";
@@ -14,12 +14,17 @@ function Home() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { search } = useLocation(); // Hook para leer query params
+
   /**
    * Obtiene artículos desde la API
    */
   const fetchArticles = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/articles?limit=6`);
+      const searchParams = new URLSearchParams(search);
+      const query = searchParams.get("search");
+
+      const res = await fetch(`${API_BASE_URL}/api/articles${query ? `?search=${query}` : '?limit=6'}`); // Si busca, busca todo. Si no, solo 6 recientes.
       const data = await res.json();
       setArticles(data.articles || []);
     } catch (err) {
@@ -31,7 +36,7 @@ function Home() {
 
   useEffect(() => {
     fetchArticles();
-  }, []);
+  }, [search]); // Re-ejecutar cuando cambie la URL (?search=...)
 
   if (loading) return <p>Cargando artículos...</p>;
 

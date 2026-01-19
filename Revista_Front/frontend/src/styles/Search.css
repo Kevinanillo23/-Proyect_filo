@@ -1,0 +1,51 @@
+/* Update Search Input Style in Navbar */
+.search-form {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-right: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.search-form:focus-within {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    padding: 5px;
+    width: 150px;
+    transition: width 0.3s ease;
+}
+
+.search-input:focus {
+    width: 200px;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-btn:hover {
+    color: var(--primary);
+}
+
+/* Adjust mobile layout if needed */
+@media (max-width: 768px) {
+    .search-form {
+        display: none;
+        /* Hide on mobile for now or style differently */
+    }
+}

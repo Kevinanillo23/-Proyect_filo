@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const articleController = require("../controllers/articleController");
 const authenticateAdmin = require("../Middleware/authenticateAdmin");
+const authenticateUser = require("../Middleware/authenticateUser");
 
 /**
  * @swagger
@@ -133,5 +134,28 @@ router.patch("/:id", authenticateAdmin, articleController.updateArticle);
  *         description: Artículo no encontrado
  */
 router.delete("/:id", authenticateAdmin, articleController.deleteArticle);
+
+/**
+ * @swagger
+ * /articles/{id}/comments:
+ *   post:
+ *     summary: Agregar un comentario
+ *     tags: [Articles]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Comentario agregado
+ */
+router.post("/:id/comments", authenticateUser, articleController.addComment);
 
 module.exports = router;

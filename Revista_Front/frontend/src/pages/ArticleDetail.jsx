@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import "../styles/articleDetail.css";
+import CommentSection from "../components/CommentSection";
 import { API_BASE_URL } from "../configuration";
 
 /**
@@ -59,6 +60,13 @@ function ArticleDetail() {
       <div className="article-body">
         <p>{article.content}</p>
       </div>
+
+      <CommentSection
+        articleId={id}
+        comments={article.comments || []}
+        onCommentAdded={(updatedComments) => setArticle({ ...article, comments: updatedComments })}
+      />
+
       <Link to="/" className="btn-back">← Volver al inicio</Link>
     </div>
   );

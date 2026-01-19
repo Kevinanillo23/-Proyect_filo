@@ -10,8 +10,12 @@ const API_URL = `${API_BASE_URL}/api/articles`;
  * @throws {Error} If the request fails
  * @returns {Promise<Object>} List of articles and pagination
  */
-export const fetchArticles = async () => {
-  const res = await fetchWithAuth(API_URL);
+export const fetchArticles = async (searchQuery = "") => {
+  const url = searchQuery
+    ? `${API_URL}?search=${encodeURIComponent(searchQuery)}`
+    : API_URL;
+
+  const res = await fetchWithAuth(url);
   if (!res.ok) throw new Error("Error cargando artículos");
   return res.json();
 };
