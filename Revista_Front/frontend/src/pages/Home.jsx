@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "../styles/Home.css";
+import "../styles/HomePage.css";
 import { API_BASE_URL } from "../config";
 import PageTransition from "../components/PageTransition";
 import HeroCarousel from "../components/HeroCarousel";
