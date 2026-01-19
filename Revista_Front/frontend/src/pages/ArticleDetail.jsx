@@ -26,20 +26,24 @@ function ArticleDetail() {
    *
    * @async
    */
-  const fetchArticle = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/articles/${id}`);
-      if (!res.ok) throw new Error("Error al obtener el artículo");
-      const data = await res.json();
-      setArticle(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    /**
+     * Obtiene el artículo desde la API según su ID.
+     * Maneja errores si no se encuentra.
+     */
+    const fetchArticle = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/articles/${id}`);
+        if (!res.ok) throw new Error("Error al obtener el artículo");
+        const data = await res.json();
+        setArticle(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchArticle();
   }, [id]);
 

@@ -79,7 +79,7 @@ function Register() {
       } else {
         setMessage(data.error || "Error en el registro");
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage("Error al conectar con el backend");
     }
   };

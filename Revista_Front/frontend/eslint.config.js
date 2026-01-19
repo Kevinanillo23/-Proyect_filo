@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'docs/']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -23,7 +23,28 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', {
+        varsIgnorePattern: '^[A-Z_]',
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }],
     },
   },
+  {
+    files: ['cypress/**/*.js', 'cypress/**/*.jsx'],
+    languageOptions: {
+      globals: {
+        cy: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        beforeEach: 'readonly',
+        context: 'readonly',
+        expect: 'readonly',
+        assert: 'readonly',
+        before: 'readonly',
+        after: 'readonly',
+        afterEach: 'readonly'
+      }
+    }
+  }
 ])

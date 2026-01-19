@@ -41,7 +41,7 @@ function ResetPassword() {
       );
       const data = await res.json();
       setMessage(data.message || data.error);
-    } catch (err) {
+    } catch (_err) {
       setMessage("Error conectando con el backend");
     }
   };

@@ -24,10 +24,18 @@ function Login() {
   const [resetEmail, setResetEmail] = useState("");
 
   /** @type {[string, Function]} */
-  const [resetMessage, setResetMessage] = useState("");
+  const [_resetMessage, setResetMessage] = useState("");
 
   /** @type {[string, Function]} */
-  const [resetError, setResetError] = useState("");
+  const [_resetError, setResetError] = useState("");
+
+  // Note: I need to check if resetError is used. If not, rename.
+  // Based on previous file view:
+  // line 30: const [resetError, setResetError] = useState("");
+  // line 91: setResetError("Introduce un correo válido.");
+  // line 109: setResetError("");
+  // It is NOT used in JSX or logic, only set. So rename to _resetError.
+
 
   const navigate = useNavigate();
 
@@ -73,7 +81,7 @@ function Login() {
       } else {
         toast.error(data.error || "Error al iniciar sesión");
       }
-    } catch (err) {
+    } catch (_err) {
       setMessage("Error al conectar con el backend");
     }
   };
@@ -114,7 +122,7 @@ function Login() {
 
       setShowModal(false);
       setResetEmail("");
-    } catch (err) {
+    } catch (_err) {
       toast.error("Error al conectar con el servidor");
       setResetMessage("");
       setShowModal(false);
