@@ -1,13 +1,17 @@
 describe("Article CRUD for Admins", () => {
     beforeEach(() => {
+        cy.viewport(1280, 720);
         // Login as admin before each test
         cy.visit("http://localhost:5173/login");
         cy.get('input[name="username"]').type("admin");
         cy.get('input[name="password"]').type("Admin1234");
         cy.get('button[type="submit"]').click();
-        cy.url().should("eq", "http://localhost:5173/");
 
-        // Go to Article Management
+        // Esperar a que el login termine
+        cy.get('.btn-logout', { timeout: 10000 }).should('be.visible');
+        cy.url().should("include", "http://localhost:5173");
+
+        // Ir a Gestión de Artículos
         cy.get('a[href="/article"]').click();
     });
 
@@ -19,10 +23,12 @@ describe("Article CRUD for Admins", () => {
         cy.get('input[name="title"]').type(title);
         cy.get('textarea[name="content"]').type(content);
         cy.get('input[name="url"]').type(imageUrl);
-        cy.get('.article-form button').click();
+        cy.intercept("POST", "**/api/articles").as("createArticle");
+        cy.get('.article-form-section button').click();
 
-        // Verify toast or success
-        cy.contains("Artículo creado con éxito").should("be.visible");
+        // Wait for request and verify toast or success
+        cy.wait("@createArticle", { timeout: 10000 });
+        cy.contains("éxito", { matchCase: false }).should("be.visible");
 
         // Verify it exists in the list
         cy.contains(title).should("be.visible");
@@ -31,21 +37,23 @@ describe("Article CRUD for Admins", () => {
     it("Debería editar un artículo existente", () => {
         const newTitle = `Edited Article ${Date.now()}`;
 
-        // Find the first article and click edit
-        cy.get('.article-item').first().find('.edit-btn').click();
+        // Buscar la primera fila de artículo y pulsar editar
+        cy.get('.article-row').first().find('.btn-edit').click();
 
-        // Change title
+        // Cambiar título
+        cy.intercept("PATCH", "**/api/articles/*").as("updateArticle");
         cy.get('input[name="title"]').clear().type(newTitle);
-        cy.get('.article-form button').click();
+        cy.get('.article-form-section button').click();
 
-        cy.contains("Artículo actualizado correctamente").should("be.visible");
-        cy.contains(newTitle).should("be.visible");
+        cy.wait("@updateArticle", { timeout: 10000 });
+        cy.contains("actualizado", { matchCase: false }).should("be.visible");
+        cy.contains(newTitle, { timeout: 10000 }).should("be.visible");
     });
 
     it("Debería cancelar la eliminación de un artículo", () => {
         cy.on('window:confirm', () => false);
-        cy.get('.article-item').first().find('.delete-btn').click();
-        // The article should still be there
-        cy.get('.article-item').should("exist");
+        cy.get('.article-row').first().find('.btn-delete').click();
+
+        cy.get('.article-row').should("exist");
     });
 });

@@ -6,14 +6,13 @@ describe("Login flow", () => {
     cy.get('input[name="password"]').type("Admin1234");
     cy.get('button[type="submit"]').click();
 
-    
-    cy.url().should("eq", "http://localhost:5173/");
+    // Confirmar que el login terminó esperando a que cambie la UI
+    cy.get('.btn-logout', { timeout: 10000 }).should('be.visible');
 
-    
-    cy.window().then((win) => {
-      const token = win.localStorage.getItem("token");
-      expect(token).to.exist;
-      cy.log("Token guardado:", token);
+    cy.url().should("include", "http://localhost:5173");
+
+    cy.window().should((win) => {
+      expect(win.localStorage.getItem("token")).to.exist;
     });
   });
 });

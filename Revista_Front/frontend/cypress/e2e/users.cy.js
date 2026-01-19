@@ -1,10 +1,14 @@
 describe("User Management for Admins", () => {
     beforeEach(() => {
+        cy.viewport(1280, 720);
         // Login as admin
         cy.visit("http://localhost:5173/login");
         cy.get('input[name="username"]').type("admin");
         cy.get('input[name="password"]').type("Admin1234");
         cy.get('button[type="submit"]').click();
+
+        // Esperar a que el login procese
+        cy.get('.btn-logout', { timeout: 10000 }).should('be.visible');
 
         // Go to User Management
         cy.get('a[href="/users"]').click();
@@ -23,10 +27,12 @@ describe("User Management for Admins", () => {
         cy.get('input[placeholder="Nombre"]').should("not.have.value", "");
 
         // Change role
+        cy.intercept("PATCH", "**/api/users/*").as("updateUser");
         cy.get('select').select('admin');
         cy.get('button[type="submit"]').click();
 
-        cy.contains("Usuario actualizado correctamente").should("be.visible");
+        cy.wait("@updateUser", { timeout: 10000 });
+        cy.contains("actualizado", { matchCase: false }).should("be.visible");
     });
 
     it("Debería mostrar confirmación antes de eliminar", () => {

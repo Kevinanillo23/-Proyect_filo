@@ -75,12 +75,11 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: "Contraseña incorrecta" });
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) return res.status(401).json({ error: "Contraseña incorrecta" });
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);

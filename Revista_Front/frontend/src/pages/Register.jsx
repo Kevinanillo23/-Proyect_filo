@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/register.css";
+import toast from "react-hot-toast";
 import { API_BASE_URL } from "../config";
 import PageTransition from "../components/PageTransition";
 
@@ -73,13 +74,8 @@ function Register() {
       const data = await res.json();
 
       if (res.ok) {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          sessionStorage.setItem("user", JSON.stringify(data.user));
-        }
-
-        setMessage("Registro exitoso");
-        navigate("/");
+        toast.success("¡Registro exitoso! Iniciando sesión...");
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setMessage(data.error || "Error en el registro");
       }

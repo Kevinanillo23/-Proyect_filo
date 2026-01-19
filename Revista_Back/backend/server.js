@@ -30,13 +30,13 @@ app.use(cors({
   credentials: true
 }));
 
-// 3. Rate Limiting: Evitar ataques de fuerza bruta y DoS
+// Rate Limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // Máximo 100 peticiones por IP en ese tiempo
-  message: "Demasiadas peticiones desde esta IP, por favor intente de nuevo en 15 minutos"
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Demasiadas peticiones desde esta IP, por favor intente de nuevo en 15 minutos",
 });
-app.use("/api/", limiter);
+app.use("/api", limiter);
 
 // 4. Body Parser: Limitar el tamaño de los datos de entrada
 app.use(express.json({ limit: "10kb" }));
