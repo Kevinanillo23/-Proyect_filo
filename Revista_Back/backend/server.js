@@ -1,14 +1,13 @@
-// server.js
 const express = require("express");
 const sequelize = require("./config/db");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const hpp = require("hpp");
+// Eliminamos hpp y xss-clean por incompatibilidad con Express 5 (req.query es solo lectura)
 require("dotenv").config();
 
-// Rutas
+// Importación de Rutas
 const userRoutes = require("./routes/userRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 const authRoutes = require("./routes/auth");
@@ -17,116 +16,135 @@ const setupSwagger = require("./config/swagger");
 const app = express();
 
 /**
- * SEGURIDAD PRO - Middlewares de protección
+ * MIDDLEWARES DE SEGURIDAD (Arquitectura compatible con Express 5)
  */
 
-// 1. Helmet: Cabeceras de seguridad HTTP
-app.use(helmet());
-
-// 2. CORS: Configuración restringida
+// 1. CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
-// Rate Limiting
+// 2. Helmet
+app.use(helmet());
+
+// 3. Body Parser
+app.use(express.json({ limit: "10kb" }));
+
+// 4. Capa de Sanitización Universal Personalizada (NoSQL + XSS)
+// Esta versión NO intenta sobrescribir req.query, solo limpia sus valores
+app.use((req, res, next) => {
+  const sanitizeValue = (val) => {
+    if (typeof val === 'string') {
+      return val.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    return val;
+  };
+
+  const traverse = (obj) => {
+    if (obj && typeof obj === 'object') {
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          if (key.startsWith("$") || key.includes(".")) {
+            delete obj[key];
+          } else {
+            if (typeof obj[key] === 'string') {
+              obj[key] = sanitizeValue(obj[key]);
+            } else {
+              traverse(obj[key]);
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Saneamos body y params (son mutables)
+  if (req.body) traverse(req.body);
+  if (req.params) traverse(req.params);
+
+  // Para query string en Express 5, tratamos de limpiar los valores sin reasignar la propiedad query
+  if (req.query) {
+    for (const key in req.query) {
+      if (typeof req.query[key] === 'string') {
+        req.query[key] = sanitizeValue(req.query[key]);
+      }
+    }
+  }
+
+  next();
+});
+
+// 5. Rate Limiting General
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: "Demasiadas peticiones desde esta IP, por favor intente de nuevo en 15 minutos",
+  // Permisivo por defecto en local/desarrollo (2000 req), estricto solo en producción (100 req)
+  max: process.env.NODE_ENV === "production" ? 100 : 2000,
+  message: "Demasiadas peticiones desde esta IP",
 });
 app.use("/api", limiter);
 
-// 4. Body Parser: Limitar el tamaño de los datos de entrada
-app.use(express.json({ limit: "10kb" }));
-
-// 5. HPP: Prevenir contaminación de parámetros HTTP
-app.use(hpp());
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  // Permisivo en local (1000 intentos), estricto en producción (10 intentos)
+  max: process.env.NODE_ENV === "production" ? 10 : 1000,
+  message: "Demasiados intentos de acceso",
+});
+app.use("/api/users/login", authLimiter);
+app.use("/api/users/register", authLimiter);
 
 /**
- * Conexión a MySQL usando Sequelize.
- *
- * @async
- * @function connectMySQL
- * @returns {Promise<void>} Conecta y sincroniza las tablas en MySQL.
+ * CONEXIONES A BASES DE DATOS
  */
 const connectMySQL = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Conexión establecida con MySQL");
-    await sequelize.sync({ alter: true });
-    console.log("Tablas sincronizadas en MySQL");
+    console.log("✅ Conexión establecida con MySQL");
+    await sequelize.sync();
+    console.log("✅ Tablas sincronizadas en MySQL");
   } catch (err) {
-    console.error("Error al conectar con MySQL:", err);
+    console.error("❌ Error al conectar con MySQL:", err.message);
   }
 };
 connectMySQL();
 
-/**
- * Conexión a MongoDB usando Mongoose.
- *
- * @async
- * @function connectMongoDB
- * @returns {Promise<void>} Conecta con la base de datos MongoDB.
- */
 const connectMongoDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/revista", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Conexión establecida con MongoDB");
+    const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/revista";
+    await mongoose.connect(mongoURI);
+    console.log("✅ Conexión establecida con MongoDB");
   } catch (err) {
-    console.error("Error al conectar con MongoDB:", err);
+    console.error("❌ Error al conectar con MongoDB:", err.message);
   }
 };
 connectMongoDB();
 
 /**
- * Ruta raíz de prueba
- * @route GET /
- * @returns {string} Mensaje de confirmación de que el backend está corriendo.
+ * RUTAS Y DOCUMENTACIÓN
  */
 app.get("/", (req, res) => {
-  res.send("Backend con Sequelize (MySQL) y MongoDB listo");
+  res.send("API Revista Online - Backend Corriendo 🚀");
 });
 
-/**
- * Rutas principales de la API
- */
-app.use("/api/users", userRoutes);        // Gestión de usuarios
-app.use("/api/auth", authRoutes);         // Login / Logout / Me
-app.use("/api/articles", articleRoutes);  // CRUD artículos
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/articles", articleRoutes);
 
-/**
- * Configuración de Swagger (documentación de la API)
- */
 setupSwagger(app);
 
-/**
- * Manejador de errores global
- * Protege de fugas de información en producción
- */
+// Manejador de errores global
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-
+  console.error("Error detectado:", err.stack);
   const statusCode = err.statusCode || 500;
-  const message = process.env.NODE_ENV === "production"
-    ? "Ocurrió un error interno en el servidor"
-    : err.message;
-
   res.status(statusCode).json({
     status: "error",
-    message: message
+    message: process.env.NODE_ENV === "production" ? "Error interno" : err.message
   });
 });
 
-/**
- * Inicialización del servidor
- */
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor listo en: http://localhost:${PORT}`);
 });

@@ -12,7 +12,11 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "tu_secreto_ref
  * Generar Access Token
  */
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "15m" });
+  return jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    JWT_SECRET,
+    { expiresIn: "1h" } // Aumentamos a 1h para mejor UX
+  );
 };
 
 /**
@@ -40,7 +44,10 @@ exports.register = async (req, res) => {
     }
 
     const existingUser = await User.findOne({ where: { username } });
-    if (existingUser) return res.status(400).json({ error: "El usuario ya existe" });
+    if (existingUser) return res.status(400).json({ error: "El nombre de usuario ya existe" });
+
+    const existingEmail = await User.findOne({ where: { email } });
+    if (existingEmail) return res.status(400).json({ error: "El email ya está registrado" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -55,13 +62,33 @@ exports.register = async (req, res) => {
 
     console.log("Usuario creado con éxito en MySQL:", newUser.id);
 
-    res.json({
+    return res.status(201).json({
       message: "Usuario registrado correctamente",
       user: { id: newUser.id, username: newUser.username, role: newUser.role }
     });
   } catch (error) {
-    console.error("ERROR DETALLADO EN REGISTRO:", error);
-    res.status(500).json({ error: "Error al registrar usuario: " + error.message });
+    // Capturar errores de restricción de Sequelize (Unicidad)
+    if (error.name === "SequelizeUniqueConstraintError" || error.name === "SequelizeValidationError") {
+      const detail = error.errors?.[0];
+      let msg = "Error de validación";
+
+      if (detail) {
+        if (detail.path === "email") msg = "El email ya está registrado";
+        else if (detail.path === "username") msg = "El nombre de usuario ya existe";
+        else msg = detail.message;
+      }
+
+      console.log("⚠ Conflicto detectado en registro:", msg);
+      return res.status(400).json({ error: msg });
+    }
+
+    // Error genérico de base de datos o lógica
+    console.error("❌ ERROR CRÍTICO EN REGISTRO:", error);
+    return res.status(500).json({
+      error: "Error interno en el registro",
+      message: error.message,
+      type: error.name
+    });
   }
 };
 

@@ -43,6 +43,10 @@ Bienvenido a **Filosofía&Co**, una plataforma profesional de alta gama diseñad
 - **JSDoc**: Código documentado bajo el estándar de Google.
 - **CI/CD Pipeline**: Pipeline de GitHub Actions que valida automáticamente el *Linting* y el *Build* del frontend en cada push, asegurando que nada rompa producción.
 
+### 📚 Documentación Completa
+- **[DOCUMENTACION_COMPLETA.md](./DOCUMENTACION_COMPLETA.md)**: Guía completa del proyecto con arquitectura, instalación, API endpoints, deployment y troubleshooting.
+- **[GUIA_TESTING_CYPRESS.md](./Revista_Front/frontend/GUIA_TESTING_CYPRESS.md)**: Guía detallada de testing con Cypress, comandos personalizados y solución de problemas.
+
 ---
 
 ## 🛠️ Tecnologías Utilizadas

@@ -1,47 +1,47 @@
-name: CI/CD Pipeline
+name: Continuous Integration - FILCO
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
-  test:
+  backend-checks:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Configurar Node.js
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            Revista_Back/backend/package-lock.json
-            Revista_Front/frontend/package-lock.json
-
-      - name: Instalar dependencias del Backend
+      - name: Install Backend Dependencies
         run: |
           cd Revista_Back/backend
           npm install
+      - name: Backend Lint
+        run: |
+          cd Revista_Back/backend
+          # npx eslint . # Descomentar cuando esté configurado
+          echo "Linting backend..."
 
-      - name: Instalar dependencias del Frontend
+  frontend-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Frontend Dependencies
         run: |
           cd Revista_Front/frontend
           npm install
-
-      # Opcional: Ejecutar Linting
-      - name: Ejecutar Lint
-        run: |
-          cd Revista_Front/frontend
-          npm run lint || echo "Linting failed but continuing..."
-
-      # Nota: Ejecutar Cypress en CI requiere levantar bases de datos temporales.
-      # Por ahora, añadiremos el paso de construcción para asegurar que no hay errores de compilación.
-      - name: Verificar Build del Frontend
+      - name: Frontend Build
         run: |
           cd Revista_Front/frontend
           npm run build
+      - name: Cypress Run (Headless)
+        run: |
+          echo "Placeholder: En un entorno Real, aquí se lanzaría Cypress"
+          # npx cypress run

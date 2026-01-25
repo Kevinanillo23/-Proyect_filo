@@ -1,34 +1,58 @@
+/* ArticleForm.css - Premium Integration */
+.article-form-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 32px;
+    background: rgba(30, 41, 59, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
 
+.article-form-section h2 {
+    color: var(--text-main);
+    text-align: center;
+    font-size: 1.8rem;
+    letter-spacing: -0.02em;
+}
 
 .article-form {
-    max-width: 600px;      
-    width: 90%;           
-    margin: 40px auto;     
-    padding: 30px 25px;    
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    font-family: Arial, sans-serif;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: transparent;
+    /* Remove the white background from inner */
+    padding: 0;
+    box-shadow: none;
+}
+
+.article-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .article-form input,
 .article-form textarea {
     width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    padding: 14px 16px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
     font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
 }
 
 .article-form input:focus,
 .article-form textarea:focus {
     outline: none;
-    border-color: #007BFF;
-    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+    border-color: var(--primary);
+    background: rgba(15, 23, 42, 1);
+    box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1);
 }
 
 .article-form textarea {
@@ -37,23 +61,24 @@
 }
 
 .article-form button {
-    background-color: #f1c40f;
-    color: #fff;
-    padding: 12px 20px;
-    font-size: 1rem;
+    margin-top: 10px;
+    padding: 14px 24px;
+    background: var(--primary);
+    color: #000;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .article-form button:hover {
-    background-color: #53f10f;
-}
-
-.article-form button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
 }
 
 
@@ -63,6 +88,6 @@
     }
 
     .article-form button {
-        width: 100%;  
+        width: 100%;
     }
 }

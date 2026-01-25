@@ -106,8 +106,8 @@ function Article() {
 
   return (
     <PageTransition>
-      <div className="article-container">
-        <h1>Artículos</h1>
+      <div className="article-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '40px' }}>Artículos</h1>
 
         {isAdmin && (
           <ArticleForm

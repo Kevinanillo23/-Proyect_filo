@@ -31,12 +31,15 @@ const ArticleItem = ({ article, isAdmin, onEdit, onDelete, isDeleting }) => {
   };
 
   return (
-    <div className="article-row">
+    <div className="article-row fade-in-up">
       <img src={article.url || "https://via.placeholder.com/80"} alt={article.title} />
 
       <div className="article-row-info">
         <h3>{article.title}</h3>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          <span className={`role-badge user`} style={{ marginRight: '10px', fontSize: '0.7rem', padding: '2px 8px' }}>
+            {article.category || "General"}
+          </span>
           ID: {article._id.slice(-6)} • {new Date(article.createdAt).toLocaleDateString()}
         </p>
       </div>

@@ -7,154 +7,125 @@ const authenticateUser = require("../Middleware/authenticateUser");
 /**
  * @swagger
  * tags:
- *   name: Articles
- *   description: Endpoints para gestión de artículos
+ * - name: Articles
+ * description: Gestion de articulos
  */
 
 /**
  * @swagger
  * /articles:
- *   get:
- *     summary: Obtener todos los artículos
- *     tags: [Articles]
- *     responses:
- *       200:
- *         description: Lista de artículos
+ * get:
+ * summary: Obtener todos los articulos
+ * tags: [Articles]
+ * responses:
+ * 200:
+ * description: Exito
+ * post:
+ * summary: Crear nuevo articulo
+ * tags: [Articles]
+ * security:
+ * - bearerAuth: []
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * title:
+ * type: string
+ * content:
+ * type: string
+ * responses:
+ * 201:
+ * description: Creado
  */
 router.get("/", articleController.getAllArticles);
-
-/**
- * @swagger
- * /articles/{id}:
- *   get:
- *     summary: Obtener un artículo por ID
- *     tags: [Articles]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID del artículo
- *     responses:
- *       200:
- *         description: Artículo encontrado
- *       404:
- *         description: Artículo no encontrado
- */
-router.get("/:id", articleController.getArticleById);
-
-/**
- * @swagger
- * /articles:
- *   post:
- *     summary: Crear un nuevo artículo
- *     tags: [Articles]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - content
- *             properties:
- *               title:
- *                 type: string
- *               content:
- *                 type: string
- *     responses:
- *       201:
- *         description: Artículo creado
- *       401:
- *         description: No autorizado
- */
 router.post("/", authenticateAdmin, articleController.createArticle);
 
 /**
  * @swagger
  * /articles/{id}:
- *   patch:
- *     summary: Actualizar un artículo por ID
- *     tags: [Articles]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID del artículo
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               content:
- *                 type: string
- *     responses:
- *       200:
- *         description: Artículo actualizado
- *       401:
- *         description: No autorizado
- *       404:
- *         description: Artículo no encontrado
+ * get:
+ * summary: Obtener articulo por ID
+ * tags: [Articles]
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * responses:
+ * 200:
+ * description: Encontrado
+ * patch:
+ * summary: Actualizar articulo
+ * tags: [Articles]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * title:
+ * type: string
+ * responses:
+ * 200:
+ * description: Actualizado
+ * delete:
+ * summary: Eliminar articulo
+ * tags: [Articles]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * responses:
+ * 200:
+ * description: Eliminado
  */
+router.get("/:id", articleController.getArticleById);
 router.patch("/:id", authenticateAdmin, articleController.updateArticle);
-
-/**
- * @swagger
- * /articles/{id}:
- *   delete:
- *     summary: Eliminar un artículo por ID
- *     tags: [Articles]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID del artículo
- *     responses:
- *       200:
- *         description: Artículo eliminado
- *       401:
- *         description: No autorizado
- *       404:
- *         description: Artículo no encontrado
- */
 router.delete("/:id", authenticateAdmin, articleController.deleteArticle);
 
 /**
  * @swagger
  * /articles/{id}/comments:
- *   post:
- *     summary: Agregar un comentario
- *     tags: [Articles]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               text:
- *                 type: string
- *     responses:
- *       200:
- *         description: Comentario agregado
+ * post:
+ * summary: Agregar comentario
+ * tags: [Articles]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * text:
+ * type: string
+ * responses:
+ * 200:
+ * description: Comentario ok
  */
 router.post("/:id/comments", authenticateUser, articleController.addComment);
 

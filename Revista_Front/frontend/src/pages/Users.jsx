@@ -126,8 +126,8 @@ function Users() {
   if (loading) return <p>Cargando usuarios...</p>;
 
   return (
-    <div className="users-container">
-      <h1>Gestión de Usuarios</h1>
+    <div className="user-management-container">
+      <h1 style={{ textAlign: 'center', marginBottom: '40px' }}>Gestión de Usuarios</h1>
 
       {isAdmin && (
         <UserForm

@@ -19,12 +19,16 @@ import React from "react";
  */
 function UserItem({ user, isAdmin, onEdit, onDelete, deleting }) {
   return (
-    <tr>
+    <tr className="fade-in-up">
       <td>{user.firstname}</td>
       <td>{user.lastname}</td>
       <td>{user.username}</td>
       <td>{user.email}</td>
-      <td>{user.role}</td>
+      <td style={{ textAlign: 'center' }}>
+        <span className={`role-badge ${user.role}`}>
+          {user.role === 'admin' ? 'Administrador' : 'Usuario'}
+        </span>
+      </td>
       {isAdmin && (
         <td>
           <button className="edit" onClick={() => onEdit(user)}>Editar</button>

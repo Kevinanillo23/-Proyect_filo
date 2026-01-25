@@ -79,7 +79,9 @@ function Login() {
         toast.success("¡Login exitoso! Bienvenido.");
         navigate("/");
       } else {
-        toast.error(data.error || "Error al iniciar sesión");
+        const errMsg = data.error || "Error al iniciar sesión";
+        setMessage(errMsg);
+        toast.error(errMsg);
       }
     } catch (_err) {
       setMessage("Error al conectar con el backend");

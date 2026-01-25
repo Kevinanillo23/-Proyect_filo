@@ -23,8 +23,16 @@ function Home() {
     try {
       const searchParams = new URLSearchParams(search);
       const query = searchParams.get("search");
+      const category = searchParams.get("category");
 
-      const res = await fetch(`${API_BASE_URL}/api/articles${query ? `?search=${query}` : '?limit=6'}`); // Si busca, busca todo. Si no, solo 6 recientes.
+      let url = `${API_BASE_URL}/api/articles`;
+      const params = new URLSearchParams();
+
+      if (query) params.append("search", query);
+      if (category) params.append("category", category);
+      if (!query && !category) params.append("limit", "6");
+
+      const res = await fetch(`${url}?${params.toString()}`);
       const data = await res.json();
       setArticles(data.articles || []);
     } catch (err) {
@@ -34,27 +42,56 @@ function Home() {
     }
   };
 
+  const categories = ["General", "Ética", "Metafísica", "Existencialismo", "Estoicismo", "Socrática", "Política"];
+
   useEffect(() => {
     fetchArticles();
   }, [search]); // Re-ejecutar cuando cambie la URL (?search=...)
 
-  if (loading) return <p>Cargando artículos...</p>;
+  if (loading) return <p style={{ textAlign: 'center', marginTop: '100px' }}>Cargando artículos...</p>;
 
   return (
     <PageTransition>
       <HeroCarousel />
       <div className="home-container" style={{ marginTop: '80px' }}>
-        <h1>Actualidad Filosófica</h1>
+        <h1>
+          {new URLSearchParams(search).get("search")
+            ? `Resultados para: "${new URLSearchParams(search).get("search")}"`
+            : "Actualidad Filosófica"}
+        </h1>
+
+        <div className="category-filters" style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '40px' }}>
+          <Link to="/" className={`role-badge ${!new URLSearchParams(search).get("category") ? 'admin' : 'user'}`} style={{ textDecoration: 'none', cursor: 'pointer' }}>
+            Todos
+          </Link>
+          {categories.map(cat => (
+            <Link
+              key={cat}
+              to={`/?category=${cat}`}
+              className={`role-badge ${new URLSearchParams(search).get("category") === cat ? 'admin' : 'user'}`}
+              style={{ textDecoration: 'none', cursor: 'pointer' }}
+            >
+              {cat}
+            </Link>
+          ))}
+        </div>
 
         {articles.length === 0 ? (
           <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No hay artículos disponibles.</p>
         ) : (
           <div className="news-grid">
-            {articles.map((article) => (
-              <div key={article._id} className="card">
+            {articles.map((article, index) => (
+              <div
+                key={article._id}
+                className="card fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
                 {article.url && <img src={article.url} alt={article.title} />}
 
                 <div className="card-content">
+                  <span className="role-badge user" style={{ fontSize: '0.65rem', marginBottom: '10px', display: 'inline-block' }}>
+                    {article.category || "General"}
+                  </span>
                   <h2>{article.title}</h2>
                   <p>
                     {article.content.length > 150

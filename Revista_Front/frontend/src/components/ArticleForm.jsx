@@ -53,6 +53,24 @@ function ArticleForm({ newArticle, setNewArticle, onSubmit, editing }) {
           />
         </div>
         <div>
+          <label>Categoría</label>
+          <select
+            name="category"
+            value={newArticle.category || "General"}
+            onChange={handleChange}
+            className="search-input"
+            style={{ width: '100%', background: 'rgba(15, 23, 42, 0.8)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '12px', borderRadius: '8px' }}
+          >
+            <option value="General">General</option>
+            <option value="Ética">Ética</option>
+            <option value="Metafísica">Metafísica</option>
+            <option value="Existencialismo">Existencialismo</option>
+            <option value="Estoicismo">Estoicismo</option>
+            <option value="Socrática">Socrática</option>
+            <option value="Política">Política</option>
+          </select>
+        </div>
+        <div>
           <label>Imagen de Portada (URL)</label>
           <input
             name="url"
