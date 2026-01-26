@@ -113,7 +113,7 @@ describe("CRUD de Artículos (Admin)", () => {
 
         // Guardar el título del artículo a eliminar
         cy.get('.article-row, tbody tr').first().then(($row) => {
-            const articleTitle = $row.text();
+            const _articleTitle = $row.text();
 
             // Interceptar petición de eliminación
             cy.intercept("DELETE", "**/api/articles/*").as("deleteArticle");

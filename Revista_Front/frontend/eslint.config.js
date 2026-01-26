@@ -43,7 +43,8 @@ export default defineConfig([
         assert: 'readonly',
         before: 'readonly',
         after: 'readonly',
-        afterEach: 'readonly'
+        afterEach: 'readonly',
+        Cypress: 'readonly'
       }
     }
   }

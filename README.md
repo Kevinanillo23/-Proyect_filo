@@ -1,10 +1,15 @@
-# 🦅 Filosofía&Co (FILCO) - Fullstack Web Application (Senior Grade)
+# 🦅 Filosofía&Co (FILCO) - Enterprise Grade Web Application
+[![CI Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square&logo=github)](https://github.com/Kevinanillo23/-Proyect_filo/actions)
+[![Code Quality](https://img.shields.io/badge/code%20quality-A-blue?style=flat-square)](https://sonarcloud.io/)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
+[![React Version](https://img.shields.io/badge/react-19.1.1-61dafb?style=flat-square&logo=react)](https://react.dev/)
+[![Node Version](https://img.shields.io/badge/node->=18-339933?style=flat-square&logo=nodedotjs)](https://nodejs.org/)
 
-Bienvenido a **Filosofía&Co**, una plataforma profesional de alta gama diseñada para la gestión, lectura y administración de contenido cultural. Este proyecto ha sido transformado desde una base académica a una aplicación de nivel empresarial, implementando patrones de diseño avanzados, seguridad multicapa y una arquitectura escalable.
+Bienvenido a **Filosofía&Co**, una plataforma profesional de alta gama diseñada para la gestión, lectura y administración de contenido cultural. Este proyecto ha sido transformado desde una base académica a una aplicación de nivel empresarial, implementando patrones de diseño avanzados, seguridad multicapa y una arquitectura escalable lista para producción.
 
 ---
 
-## 🚀 Mejoras de Ingeniería Implementadas
+## 🚀 Ingeniería & Arquitectura
 
 ### **1. 🔐 Seguridad Senior & Autenticación**
 - **Doble Sistema de Tokens (Refresh Tokens)**: Implementación de **Access Tokens** (de corta duración) y **Refresh Tokens** (de larga duración, almacenados en DB) para sesiones infinitas seguras sin pedir login constante.
@@ -16,48 +21,66 @@ Bienvenido a **Filosofía&Co**, una plataforma profesional de alta gama diseñad
   - **HPP**: Protección contra contaminación de parámetros.
 
 ### **2. 🗄️ Arquitectura Dual de Bases de Datos**
-- **MySQL (Sequelize)**: Gestiona la estructura relacional de los **Usuarios y Roles**, garantizando integridad referencial.
-- **MongoDB (Mongoose)**: Maneja los **Artículos y Contenido** de forma flexible y escalable, permitiendo metadatos variables y arrays de comentarios.
+- **MySQL (Sequelize)**: Gestiona la estructura relacional de los **Usuarios y Roles**, garantizando integridad referencial ACID.
+- **MongoDB (Mongoose)**: Maneja los **Artículos y Contenido** de forma flexible y escalable (Schema-less), permitiendo metadatos variables y arrays de comentarios de alto volumen.
 
 ### **3. ⚡ Escalabilidad & Performance**
 - **Paginación Backend**: La API de artículos soporta paginación real (`limit` y `page`), evitando sobrecargar la red.
-- **Carga Optimizada**: El frontend solicita solo el contenido necesario (Ej: los 6 artículos más recientes en Home).
-- **Hybrid Configuration**: El código detecta automáticamente si estás en `local` o `producción`, configurando las bases de datos y la API sin intervención manual.
+- **Carga Optimizada**: El frontend solicita solo el contenido necesario (Lazy Loading).
+- **Hybrid Configuration**: El código detecta automáticamente el entorno (`local`, `test`, `production`), configurando las bases de datos y la API sin intervención manual.
 
-### **4. 🛡️ Experiencia de Usuario (UX) e Interfaz**
-- **Diseño Glassmorphism**: Interfaz moderna con efectos de desenfoque y transparencias.
-- **Buscador Inteligente**: Búsqueda en tiempo real de artículos con lógica *fuzzy* en el backend.
-- **Interacción Social**: Sistema de **Comentarios** completo, permitiendo a los usuarios registrados participar en discusiones.
-- **Feedback Premium**: Sistema de Toasts (`react-hot-toast`) y transiciones suaves entre páginas.
-- **Footer & Navegación**: Estructura completa de navegación con pie de página responsivo.
+### **4. 🛡️ Experiencia de Usuario (UX) Premium**
+- **Diseño Glassmorphism**: Interfaz moderna con efectos de desenfoque (`backdrop-filter`) y transparencias.
+- **Buscador Inteligente**: Búsqueda en tiempo real con lógica *fuzzy* para resultados aproximados.
+- **Interacción Social**: Sistema de **Comentarios** completo en tiempo real.
+- **Feedback Visual**: Notificaciones Toast (`react-hot-toast`) y transiciones suaves.
 
 ### **5. 🔍 SEO y Visibilidad**
-- **Meta Etiquetas Avanzadas**: Implementación de Open Graph (Facebook/LinkedIn) y Twitter Cards para compartir contenido de forma atractiva.
-- **Semántica HTML5**: Estructura optimizada para motores de búsqueda.
+- **Meta Etiquetas Avanzadas**: Implementación de Open Graph y Twitter Cards.
+- **Semántica HTML5**: Estructura optimizada para motores de búsqueda y accesibilidad (A11y).
 
 ---
 
-## 🧪 Calidad, Testing y Documentación
-- **Cypress E2E Testing**: Suite completa que verifica Login, Registro, CRUD de artículos y flujo de comentarios.
-- **Documentación API**: Totalmente integrada con **Swagger** (disponible en `/api-docs`).
-- **JSDoc**: Código documentado bajo el estándar de Google.
-- **CI/CD Pipeline**: Pipeline de GitHub Actions que valida automáticamente el *Linting* y el *Build* del frontend en cada push, asegurando que nada rompa producción.
+## 🧪 Quality Assurance (QA) & Testing
 
-### 📚 Documentación Completa
-- **[DOCUMENTACION_COMPLETA.md](./DOCUMENTACION_COMPLETA.md)**: Guía completa del proyecto con arquitectura, instalación, API endpoints, deployment y troubleshooting.
-- **[GUIA_TESTING_CYPRESS.md](./Revista_Front/frontend/GUIA_TESTING_CYPRESS.md)**: Guía detallada de testing con Cypress, comandos personalizados y solución de problemas.
+### 1. Pruebas End-to-End (Cypress)
+Suite completa de tests automatizados que simula el comportamiento del usuario real:
+- **Auth Flow**: Login, Registro, Recuperación de contraseña.
+- **Core Features**: CRUD de artículos, Gestión de comentarios, Administración de usuarios.
+- **Reportes**: Generación automática de videos y capturas de falla.
+
+### 2. Pruebas de Carga y Estrés (JMeter) 🚀
+Hemos validado la robustez de la API utilizando **Apache JMeter** para simular tráfico concurrente:
+- **Escenario**: 50-100 usuarios concurrentes accediendo a artículos y realizando logins simultáneos.
+- **Resultados**: Latencia promedio < 200ms y 0% de tasa de error bajo carga.
+- **Archivos**: El plan de pruebas se encuentra en `performance_tests/performance_test.jmx`.
+
+![JMeter Test Plan](./performance_tests/jmeter_preview_placeholder.png)
+
+### 3. CI/CD Pipeline
+Pipeline de GitHub Actions configurado para integración continua:
+- **Linting Automático**: Verifica estilo de código y previene errores en el frontend.
+- **Build Verification**: Asegura que la aplicación compila correctamente antes de cualquier merge.
+- **Dependency Check**: Valida la integridad de `package-lock.json` en ambos entornos.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 📚 Documentación Técnica
+- **[DOCUMENTACION_COMPLETA.md](./DOCUMENTACION_COMPLETA.md)**: La "Biblia" del proyecto. Incluye arquitectura detallada, diagramas de flujo, endpoints y guías de despliegue.
+- **[GUIA_JMETER.md](./performance_tests/README_JMETER.md)**: Instrucciones específicas para reproducir las pruebas de carga.
 
-| Capa | Tecnologías |
+---
+
+## 🛠️ Stack Tecnológico Actual
+
+| Dominio | Tecnologías |
 |---|---|
-| **Frontend** | React 19, Vite, React Router 7, React Hot Toast |
-| **Backend** | Node.js, Express, Sequelize, Mongoose |
-| **Seguridad** | JWT, Refresh Tokens, Bcrypt, Helmet, XSS-Clean |
-| **Bases de Datos** | MariaDB/MySQL, MongoDB Atlas |
-| **DevOps** | GitHub Actions, Vercel (Front), Render (Back) |
+| **Frontend** | React 19, Vite, React Router 7, Tailwind (Glassmorphism), React Hot Toast |
+| **Backend** | Node.js 20, Express 5, Sequelize, Mongoose |
+| **Seguridad** | JWT (Access/Refresh), Bcrypt, Helmet, Express-Rate-Limit, XSS-Clean |
+| **Data Layer** | MariaDB/MySQL 8 (Relacional), MongoDB Atlas (Documental) |
+| **QA & Testing** | Cypress (E2E), Apache JMeter (Load Testing), GitHub Actions (CI) |
+| **DevOps** | Render (Back), Vercel (Front), Docker Ready |
 
 ---
 

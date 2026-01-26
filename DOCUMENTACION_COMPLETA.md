@@ -9,9 +9,10 @@
 6. [Guía de Uso](#guía-de-uso)
 7. [API Endpoints](#api-endpoints)
 8. [Testing con Cypress](#testing-con-cypress)
-9. [Seguridad](#seguridad)
-10. [Deployment](#deployment)
-11. [Solución de Problemas](#solución-de-problemas)
+9. [Testing de Rendimiento (JMeter)](#testing-de-rendimiento-jmeter)
+10. [Seguridad](#seguridad)
+11. [Deployment](#deployment)
+12. [Solución de Problemas](#solución-de-problemas)
 
 ---
 
@@ -474,6 +475,42 @@ app.use(cors({
 
 ---
 
+## 🚀 Testing de Rendimiento (JMeter)
+
+Para garantizar que la aplicación soporte una alta concurrencia en producción, hemos implementado pruebas de carga utilizando **Apache JMeter**.
+
+### Escenarios de Prueba
+El plan `performance_test.jmx` valida dos perfiles críticos:
+
+1.  **Visitantes (Lectura Masiva)**:
+    - **Simulación**: 50 usuarios concurrentes solicitando el feed de artículos.
+    - **Endpoint**: `GET /api/articles`
+    - **Objetivo**: Asegurar latencia < 500ms bajo carga.
+
+2.  **Administradores (Operaciones Críticas)**:
+    - **Simulación**: 10 administradores realizando login simultáneamente y consultando usuarios.
+    - **Flujo**: Login -> Token Extraction -> `GET /api/users`.
+    - **Objetivo**: Validar integridad de sesiones y manejo de tokens bajo estrés.
+
+### Cómo Ejecutar las Pruebas
+
+#### Requisitos
+- Java JRE 8+
+- Apache JMeter
+
+#### Ejecución (CLI)
+```bash
+cd performance_tests
+jmeter -n -t performance_test.jmx -l resultados.jtl
+```
+
+#### Interpretación de Métricas
+- **Latencia**: Tiempo de respuesta desde que sale el request hasta que llega el primer byte.
+- **Throughput (TPS)**: Transacciones por segundo.
+- **% Error**: Debe mantenerse en 0%. Si sube, revisar logs de `Rate Limiting` en backend.
+
+---
+
 ## 🛡️ Seguridad
 
 ### Implementaciones de Seguridad
@@ -746,11 +783,30 @@ npm run doc             # Generar docs JSDoc
 
 ---
 
-## 📄 Licencia
+## 🤖 CI/CD Pipeline (GitHub Actions)
 
-Este proyecto es de código abierto y está disponible bajo la licencia que determines.
+El proyecto cuenta con un sistema de Integración Continua profesional definido en `.github/workflows/ci.yml`.
+
+### Stages del Pipeline
+
+#### 1. Backend Integrity Check
+- **Instalación Limpia**: Usa `npm ci` para respetar estrictamente `package-lock.json`.
+- **Análisis Estático**: Verifica que el código del servidor (`server.js`) sea sintácticamente correcto antes de desplegar.
+
+#### 2. Frontend Quality Guard
+- **Linter Estricto**: Ejecuta `ESLint` para detectar errores potenciales y asegurar consistencia de código (Reglas React Hooks + Standard).
+- **Build de Producción**: Simula el proceso de compilación de Vite (`npm run build`) para detectar errores que solo ocurren al minificar el código.
+
+> **Nota**: Este pipeline se ejecuta automáticamente en cada `push` o `pull_request` a las ramas `main` o `master`.
 
 ---
 
-**Última actualización**: 2026-01-25
-**Versión**: 1.0.0
+## 📄 Licencia
+
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+
+---
+
+**Última actualización**: 2026-01-26
+**Estado**: 🟢 Stable / Production Ready
+**Versión**: 1.1.0 (Performance Update)

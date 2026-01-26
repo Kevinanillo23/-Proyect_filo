@@ -7,7 +7,8 @@ on:
     branches: [ main, master ]
 
 jobs:
-  backend-checks:
+  backend-validation:
+    name: Backend Integrity Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,17 +16,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Revista_Back/backend/package-lock.json
+      
       - name: Install Backend Dependencies
         run: |
           cd Revista_Back/backend
-          npm install
-      - name: Backend Lint
+          npm ci
+        # Usamos 'npm ci' en lugar de 'install' para builds deterministas en CI
+
+      - name: Verify Server Syntax
         run: |
           cd Revista_Back/backend
-          # npx eslint . # Descomentar cuando esté configurado
-          echo "Linting backend..."
+          node -c server.js
+        # Verifica que no hay errores de sintaxis en el punto de entrada
 
-  frontend-checks:
+  frontend-validation:
+    name: Frontend Quality Guard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,15 +40,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: Revista_Front/frontend/package-lock.json
+
       - name: Install Frontend Dependencies
         run: |
           cd Revista_Front/frontend
-          npm install
-      - name: Frontend Build
+          npm ci
+
+      - name: Frontend Lint (ESLint)
+        run: |
+          cd Revista_Front/frontend
+          npm run lint
+        # Falla si hay errores de código o estilo (definido en package.json)
+
+      - name: Frontend Build Production
         run: |
           cd Revista_Front/frontend
           npm run build
-      - name: Cypress Run (Headless)
-        run: |
-          echo "Placeholder: En un entorno Real, aquí se lanzaría Cypress"
-          # npx cypress run
+        # Verifica que el proyecto compila correctamente para producción
+
+      # Placeholder para Cypress: En un entorno real con Docker necesitaríamos levantar 
+      # los servicios (MySQL/Mongo) antes de ejecutar esto.
+      # - name: Run Cypress E2E
+      #   uses: cypress-io/github-action@v6
+      #   with:
+      #     working-directory: Revista_Front/frontend
+      #     start: npm run dev
+      #     wait-on: 'http://localhost:5173'

@@ -41,7 +41,7 @@ const CommentSection = ({ articleId, comments = [], onCommentAdded }) => {
             } else {
                 toast.error(data.error || "Error al publicar");
             }
-        } catch (err) {
+        } catch (_err) {
             toast.error("Error de conexión");
         } finally {
             setLoading(false);

@@ -19,34 +19,34 @@ function Home() {
   /**
    * Obtiene artículos desde la API
    */
-  const fetchArticles = async () => {
-    try {
-      const searchParams = new URLSearchParams(search);
-      const query = searchParams.get("search");
-      const category = searchParams.get("category");
-
-      let url = `${API_BASE_URL}/api/articles`;
-      const params = new URLSearchParams();
-
-      if (query) params.append("search", query);
-      if (category) params.append("category", category);
-      if (!query && !category) params.append("limit", "6");
-
-      const res = await fetch(`${url}?${params.toString()}`);
-      const data = await res.json();
-      setArticles(data.articles || []);
-    } catch (err) {
-      console.error("Error al obtener artículos:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const categories = ["General", "Ética", "Metafísica", "Existencialismo", "Estoicismo", "Socrática", "Política"];
 
   useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const searchParams = new URLSearchParams(search);
+        const query = searchParams.get("search");
+        const category = searchParams.get("category");
+
+        let url = `${API_BASE_URL}/api/articles`;
+        const params = new URLSearchParams();
+
+        if (query) params.append("search", query);
+        if (category) params.append("category", category);
+        if (!query && !category) params.append("limit", "6");
+
+        const res = await fetch(`${url}?${params.toString()}`);
+        const data = await res.json();
+        setArticles(data.articles || []);
+      } catch (err) {
+        console.error("Error al obtener artículos:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchArticles();
-  }, [search]); // Re-ejecutar cuando cambie la URL (?search=...)
+  }, [search]);
 
   if (loading) return <p style={{ textAlign: 'center', marginTop: '100px' }}>Cargando artículos...</p>;
 
