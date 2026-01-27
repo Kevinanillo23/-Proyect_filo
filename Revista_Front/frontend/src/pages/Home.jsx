@@ -1,109 +1,98 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../styles/HomePage.css";
-import { API_BASE_URL } from "../configuration";
 import PageTransition from "../components/PageTransition";
 import HeroCarousel from "../components/HeroCarousel";
+import ArticleCard from "../components/ArticleCard";
+import { useArticles } from "../hooks/useArticles";
 
-/**
- * Componente Home - Página principal con lista de artículos recientes
- * @component
- * @returns {JSX.Element} JSX de la página Home
- */
+const CATEGORIES = ["General", "Ética", "Metafísica", "Existencialismo", "Estoicismo", "Socrática", "Política"];
+
 function Home() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { search } = useLocation();
 
-  const { search } = useLocation(); // Hook para leer query params
-
-  /**
-   * Obtiene artículos desde la API
-   */
-  const categories = ["General", "Ética", "Metafísica", "Existencialismo", "Estoicismo", "Socrática", "Política"];
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const searchParams = new URLSearchParams(search);
-        const query = searchParams.get("search");
-        const category = searchParams.get("category");
-
-        let url = `${API_BASE_URL}/api/articles`;
-        const params = new URLSearchParams();
-
-        if (query) params.append("search", query);
-        if (category) params.append("category", category);
-        if (!query && !category) params.append("limit", "6");
-
-        const res = await fetch(`${url}?${params.toString()}`);
-        const data = await res.json();
-        setArticles(data.articles || []);
-      } catch (err) {
-        console.error("Error al obtener artículos:", err);
-      } finally {
-        setLoading(false);
-      }
+  // Create stable params object to prevent infinite loops in hook
+  const params = useMemo(() => {
+    const searchParams = new URLSearchParams(search);
+    return {
+      search: searchParams.get("search"),
+      category: searchParams.get("category")
     };
-
-    fetchArticles();
   }, [search]);
 
-  if (loading) return <p style={{ textAlign: 'center', marginTop: '100px' }}>Cargando artículos...</p>;
+  // Use the Controller Hook
+  const { articles, loading, error } = useArticles(params);
+
+  // View Logic
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="home-loading">
+          <div className="spinner"></div>
+          <p>Cargando pensamiento...</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="error-state">
+          <p>Error: {error}</p>
+        </div>
+      );
+    }
+
+    if (articles.length === 0) {
+      return (
+        <div className="empty-state">
+          <p>No hay artículos disponibles en este momento.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="news-grid">
+        {articles.map((article, index) => (
+          <ArticleCard key={article._id} article={article} index={index} />
+        ))}
+      </div>
+    );
+  };
+
+  const searchQuery = params.search;
+  const selectedCategory = params.category;
 
   return (
     <PageTransition>
       <HeroCarousel />
-      <div className="home-container" style={{ marginTop: '80px' }}>
-        <h1>
-          {new URLSearchParams(search).get("search")
-            ? `Resultados para: "${new URLSearchParams(search).get("search")}"`
-            : "Actualidad Filosófica"}
-        </h1>
+      <div className="home-container">
+        <header className="home-header">
+          <h1>
+            {searchQuery
+              ? `Resultados para: "${searchQuery}"`
+              : "Actualidad Filosófica"}
+          </h1>
+        </header>
 
-        <div className="category-filters" style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '40px' }}>
-          <Link to="/" className={`role-badge ${!new URLSearchParams(search).get("category") ? 'admin' : 'user'}`} style={{ textDecoration: 'none', cursor: 'pointer' }}>
+        <nav className="category-filters">
+          <Link
+            to="/"
+            className={`role-badge ${!selectedCategory ? 'active' : ''}`}
+          >
             Todos
           </Link>
-          {categories.map(cat => (
+          {CATEGORIES.map(cat => (
             <Link
               key={cat}
               to={`/?category=${cat}`}
-              className={`role-badge ${new URLSearchParams(search).get("category") === cat ? 'admin' : 'user'}`}
-              style={{ textDecoration: 'none', cursor: 'pointer' }}
+              className={`role-badge ${selectedCategory === cat ? 'active' : ''}`}
             >
               {cat}
             </Link>
           ))}
-        </div>
+        </nav>
 
-        {articles.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No hay artículos disponibles.</p>
-        ) : (
-          <div className="news-grid">
-            {articles.map((article, index) => (
-              <div
-                key={article._id}
-                className="card fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {article.url && <img src={article.url} alt={article.title} />}
-
-                <div className="card-content">
-                  <span className="role-badge user" style={{ fontSize: '0.65rem', marginBottom: '10px', display: 'inline-block' }}>
-                    {article.category || "General"}
-                  </span>
-                  <h2>{article.title}</h2>
-                  <p>
-                    {article.content.length > 150
-                      ? article.content.slice(0, 150) + "..."
-                      : article.content}
-                  </p>
-                  <Link to={`/article/${article._id}`}>Leer más</Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {renderContent()}
       </div>
     </PageTransition>
   );

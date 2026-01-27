@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../styles/Comments.css";
-import { fetchWithAuth } from "../utils/authHelper";
-import { API_BASE_URL } from "../configuration";
+import { articleService } from "../services/articleService";
 
 /**
  * Sección de comentarios para un artículo
@@ -25,24 +24,13 @@ const CommentSection = ({ articleId, comments = [], onCommentAdded }) => {
 
         setLoading(true);
         try {
-            const res = await fetchWithAuth(`${API_BASE_URL}/api/articles/${articleId}/comments`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: newComment }),
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                toast.success("Comentario publicado");
-                setNewComment("");
-                // Pasar la lista completa de comentarios actualizada
-                onCommentAdded(data.comments);
-            } else {
-                toast.error(data.error || "Error al publicar");
-            }
-        } catch (_err) {
-            toast.error("Error de conexión");
+            const data = await articleService.addComment(articleId, newComment);
+            toast.success("Comentario publicado");
+            setNewComment("");
+            // Pass the updated list of comments
+            onCommentAdded(data.comments);
+        } catch (err) {
+            toast.error(err.message || "Error al publicar");
         } finally {
             setLoading(false);
         }
