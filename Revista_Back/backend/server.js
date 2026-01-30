@@ -104,17 +104,17 @@ app.use("/api/users/register", authLimiter);
 /**
  * CONEXIONES A BASES DE DATOS
  */
-const connectMySQL = async () => {
+const connectPostgres = async () => {
   try {
     await sequelize.authenticate();
-    console.log("✅ Conexión establecida con MySQL");
+    console.log("✅ Conexión establecida con PostgreSQL (Supabase)");
     await sequelize.sync();
-    console.log("✅ Tablas sincronizadas en MySQL");
+    console.log("✅ Tablas sincronizadas en la base de datos");
   } catch (err) {
-    console.error("❌ Error al conectar con MySQL:", err.message);
+    console.error("❌ Error al conectar con la base de datos:", err.message);
   }
 };
-connectMySQL();
+connectPostgres();
 
 const connectMongoDB = async () => {
   try {
