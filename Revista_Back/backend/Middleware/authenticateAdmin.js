@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user"); 
+const User = require("../models/User");
+
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "tu_secreto_super_seguro";
@@ -19,7 +20,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "tu_secreto_super_seguro";
  */
 const authenticateAdmin = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1]; 
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ error: "No autorizado" });
 
     const decoded = jwt.verify(token, JWT_SECRET);

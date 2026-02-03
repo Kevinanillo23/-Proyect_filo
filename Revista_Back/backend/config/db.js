@@ -1,19 +1,53 @@
 const { Sequelize } = require("sequelize");
-require("dotenv").config();
+const { execSync } = require("child_process");
+const config = require("./config");
 
-/**
- * Instancia de Sequelize para la conexión a la base de datos MySQL.
- *
- * @type {Sequelize}
- */
-const sequelize = new Sequelize(
-  process.env.DB_NAME || "filco",
-  process.env.DB_USER || "root",
-  process.env.DB_PASSWORD || "",
-  {
-    host: process.env.DB_HOST || "localhost",
-    dialect: process.env.DB_DIALECT || "mysql",
+
+let sequelize;
+const isSupabaseAvailable = () => {
+  try {
+    execSync("nslookup aws-1-eu-west-1.pooler.supabase.com", { stdio: 'ignore' });
+    return true;
+  } catch (e) {
+    return false;
   }
-);
+};
 
-module.exports = sequelize;
+if (isSupabaseAvailable()) {
+  console.log("🌐 Supabase DNS detected. Initializing PostgreSQL connection...");
+  sequelize = new Sequelize(config.supabase.uri, {
+    dialect: "postgres",
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  });
+} else {
+  console.log("🏠 Supabase not reachable. Initializing local MySQL connection...");
+  sequelize = new Sequelize(
+    config.mysql.name,
+    config.mysql.user,
+    config.mysql.password,
+    {
+      host: config.mysql.host,
+      dialect: "mysql",
+      logging: false
+    }
+  );
+}
+
+
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log(`✅ Database Connected: ${sequelize.getDialect() === 'postgres' ? 'Supabase' : 'MySQL'}`);
+    await sequelize.sync();
+  } catch (err) {
+    console.error("❌ Database connection error:", err.message);
+  }
+};
+
+module.exports = { sequelize, connectDB };

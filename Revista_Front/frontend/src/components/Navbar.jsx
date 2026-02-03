@@ -78,10 +78,12 @@ function Navbar() {
    */
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     sessionStorage.removeItem("user");
     setUser(null);
     navigate("/");
   };
+
 
   return (
     <>

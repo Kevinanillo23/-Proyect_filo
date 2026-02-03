@@ -1,6 +1,8 @@
-const bcrypt = require("bcrypt");
-const User = require("./models/user");
-require("dotenv").config();
+const User = require("./models/User");
+
+const { connectDB } = require("./config/db");
+const config = require("./config/config");
+
 
 (async () => {
     try {

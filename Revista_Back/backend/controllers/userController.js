@@ -1,12 +1,15 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/User");
+const config = require("../config/config");
+
 const { sendResetEmail } = require("../utils/mailer");
 const { validateEmail, validatePassword } = require("../utils/validators");
 require("dotenv").config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "tu_secreto_super_seguro";
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "tu_secreto_refresh_super_seguro_local";
+const JWT_SECRET = config.jwt.secret;
+const REFRESH_TOKEN_SECRET = config.jwt.refreshSecret;
+
 
 /**
  * Generar Access Token

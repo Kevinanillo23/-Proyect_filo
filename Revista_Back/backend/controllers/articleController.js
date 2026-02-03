@@ -1,5 +1,7 @@
 const Article = require("../models/Article.js");
-const User = require("../models/user.js");
+const User = require("../models/User");
+
+
 
 /**
  * @async

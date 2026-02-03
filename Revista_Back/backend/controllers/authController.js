@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/User");
+
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
@@ -24,7 +25,7 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ 
+    res.json({
       message: "Login exitoso",
       token,
       user: { id: user.id, username: user.username, role: user.role }

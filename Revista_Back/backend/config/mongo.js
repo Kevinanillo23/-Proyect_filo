@@ -1,20 +1,26 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
+const config = require("./config");
+
 
 const connectMongoDB = async () => {
+  const atlasURI = config.mongodb.uri;
+  const localURI = "mongodb://127.0.0.1:27017/revista";
+
+
   try {
-    const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/revista";
-
-    // Mongoose 6+ default options are already optimal.
-    // Explicitly handling connection events is often better for robust apps.
-
-    await mongoose.connect(mongoURI);
-
-    console.log("✅ MongoDB Connected");
+    console.log("⏳ Connecting to MongoDB Atlas...");
+    await mongoose.connect(atlasURI, { serverSelectionTimeoutMS: 5000 });
+    console.log("✅ MongoDB Connected: Atlas (Cloud)");
   } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err.message);
-    // In production, you might want to exit process, but for dev we continue
-    // process.exit(1);
+    console.warn("❌ MongoDB Atlas Failed:", err.message);
+    console.log("🔄 Falling back to Local MongoDB...");
+
+    try {
+      await mongoose.connect(localURI);
+      console.log("✅ MongoDB Connected: Localhost");
+    } catch (localErr) {
+      console.error("❌ Critical: Local MongoDB also failed!", localErr.message);
+    }
   }
 };
 

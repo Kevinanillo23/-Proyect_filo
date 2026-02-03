@@ -1,25 +1,23 @@
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const config = require("./config");
 
-/**
- * Opciones de configuración para Swagger.
- *
- * @type {import("swagger-jsdoc").Options}
- */
+
 const options = {
   definition: {
     openapi: "3.0.0",
     info: {
       title: "API FILOSOFÍA&CO",
       version: "1.0.0",
-      description: "API para autenticación de usuarios y gestión de contraseñas",
+      description: "API para gestión de artículos y autenticación",
     },
     servers: [
       {
-        url: "http://localhost:5000/api",
+        url: `http://localhost:${config.port}/api`,
       },
     ],
   },
+
   apis: ["./routes/*.js"], // Archivos donde se buscarán anotaciones Swagger
 };
 
