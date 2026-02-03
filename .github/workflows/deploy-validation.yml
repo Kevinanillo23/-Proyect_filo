@@ -1,4 +1,4 @@
-name: Continuous Integration - FILCO
+name: Production Deployment Validation
 
 on:
   push:
