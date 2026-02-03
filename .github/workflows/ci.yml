@@ -40,8 +40,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: Revista_Front/frontend/package-lock.json
+          # Desactivamos caché para evitar conflictos con package-lock antiguos
+          # cache: 'npm'
+          # cache-dependency-path: Revista_Front/frontend/package-lock.json
+
+      - name: Debug Environment
+        run: |
+          cd Revista_Front/frontend
+          ls -la
+          npm --version
+
 
       - name: Install Frontend Dependencies
         run: |
