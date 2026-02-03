@@ -41,3 +41,13 @@ test_output/
 # Documentation
 docs/
 **/docs/
+api-docs/
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
+.vercel/
+out/
+

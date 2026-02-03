@@ -1,0 +1,14 @@
+# Linguist overrides
+# Escondemos el HTML para que GitHub se centre en tu lógica MERN (JS/JSX/CSS)
+*.html linguist-documentation
+*.md linguist-documentation
+
+# El CSS lo dejamos como detectable porque es parte de tu diseño UI personalizado
+*.css linguist-detectable
+*.jsx linguist-detectable
+*.js linguist-detectable
+
+# Ignorar archivos generados de control
+package-lock.json linguist-generated
+.gitignore linguist-generated
+.gitattributes linguist-generated
