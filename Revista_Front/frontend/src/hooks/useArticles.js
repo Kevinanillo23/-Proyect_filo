@@ -18,12 +18,18 @@ export const useArticles = (searchParams) => {
         setError(null);
         try {
             // Convert URLSearchParams or Object to plain object for service
-            const params = {};
             if (searchParams instanceof URLSearchParams) {
-                searchParams.forEach((value, key) => { params[key] = value; });
+                searchParams.forEach((value, key) => {
+                    if (value && value !== 'null') params[key] = value;
+                });
             } else if (typeof searchParams === 'object') {
-                Object.assign(params, searchParams);
+                Object.keys(searchParams).forEach(key => {
+                    if (searchParams[key] && searchParams[key] !== 'null') {
+                        params[key] = searchParams[key];
+                    }
+                });
             }
+
 
             // Default logic for Home page (if no specific search, limit to 12)
             if (!params.search && !params.category && !params.limit) {
