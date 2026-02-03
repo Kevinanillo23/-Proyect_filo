@@ -22,8 +22,8 @@ jobs:
       - name: Install Backend Dependencies
         run: |
           cd Revista_Back/backend
-          npm ci
-        # Usamos 'npm ci' en lugar de 'install' para builds deterministas en CI
+          npm install
+        # Usamos 'npm install' para mayor flexibilidad entre plataformas (Windows dev -> Linux CI)
 
       - name: Verify Server Syntax
         run: |
@@ -46,7 +46,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd Revista_Front/frontend
-          npm ci
+          npm install
 
       - name: Frontend Lint (ESLint)
         run: |
