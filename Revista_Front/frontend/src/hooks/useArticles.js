@@ -17,8 +17,10 @@ export const useArticles = (searchParams) => {
         setLoading(true);
         setError(null);
         try {
+            const params = {};
             // Convert URLSearchParams or Object to plain object for service
             if (searchParams instanceof URLSearchParams) {
+
                 searchParams.forEach((value, key) => {
                     if (value && value !== 'null') params[key] = value;
                 });
