@@ -19,7 +19,7 @@ const authenticateUser = require("../Middleware/authenticateUser");
  *     tags: [Articles]
  *     responses:
  *       200:
- *         description: Éxito
+ *         description: Lista de artículos obtenida con éxito
  *   post:
  *     summary: Crear nuevo artículo
  *     tags: [Articles]
@@ -42,7 +42,7 @@ const authenticateUser = require("../Middleware/authenticateUser");
  *                 type: string
  *     responses:
  *       201:
- *         description: Creado
+ *         description: Artículo creado correctamente
  */
 router.get("/", articleController.getAllArticles);
 router.post("/", authenticateAdmin, articleController.createArticle);
@@ -61,7 +61,7 @@ router.post("/", authenticateAdmin, articleController.createArticle);
  *           type: string
  *     responses:
  *       200:
- *         description: Encontrado
+ *         description: Artículo encontrado
  *   patch:
  *     summary: Actualizar artículo
  *     tags: [Articles]
@@ -86,7 +86,7 @@ router.post("/", authenticateAdmin, articleController.createArticle);
  *                 type: string
  *     responses:
  *       200:
- *         description: Actualizado
+ *         description: Artículo actualizado correctamente
  *   delete:
  *     summary: Eliminar artículo
  *     tags: [Articles]
@@ -100,7 +100,7 @@ router.post("/", authenticateAdmin, articleController.createArticle);
  *           type: string
  *     responses:
  *       200:
- *         description: Eliminado
+ *         description: Artículo eliminado correctamente
  */
 router.get("/:id", articleController.getArticleById);
 router.patch("/:id", authenticateAdmin, articleController.updateArticle);
