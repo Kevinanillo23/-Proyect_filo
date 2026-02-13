@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const ATLAS_URI = "mongodb+srv://kevin23:MONGOKEVIN@cluster0.rac5j25.mongodb.net/revista?appName=Cluster0";
+require('dotenv').config();
+
+const ATLAS_URI = process.env.MONGO_URI;
 
 const verify = async () => {
     try {
