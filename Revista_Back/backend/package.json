@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "mkdir -p public",
+    "build": "npm install && npm install --prefix ../../Revista_Front/frontend && npm run build --prefix ../../Revista_Front/frontend && mkdir -p public && cp -r ../../Revista_Front/frontend/dist/* public/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
