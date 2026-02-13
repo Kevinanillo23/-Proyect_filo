@@ -2,58 +2,43 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const config = require("../config/config");
-
 const { sendResetEmail } = require("../utils/mailer");
 const { validateEmail, validatePassword } = require("../utils/validators");
-require("dotenv").config();
 
-const JWT_SECRET = config.jwt.secret;
-const REFRESH_TOKEN_SECRET = config.jwt.refreshSecret;
+const { secret: JWT_SECRET, refreshSecret: REFRESH_TOKEN_SECRET } = config.jwt;
 
-
-/**
- * Generar Access Token
- */
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id, username: user.username, role: user.role },
     JWT_SECRET,
-    { expiresIn: "1h" } // Aumentamos a 1h para mejor UX
+    { expiresIn: "1h" }
   );
 };
 
-/**
- * Generar Refresh Token
- */
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
 };
 
-/**
- * Registrar un nuevo usuario
- */
 exports.register = async (req, res) => {
   try {
     const { firstname, lastname, email, username, password, role } = req.body;
-    console.log("Intentando registrar usuario:", { username, email });
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ error: "El email no es válido" });
+      return res.status(400).json({ error: "Formato de email inválido" });
     }
     if (!validatePassword(password)) {
       return res.status(400).json({
-        error: "La contraseña debe tener mínimo 5 caracteres, una mayúscula y un número"
+        error: "La contraseña no cumple con los requisitos de seguridad"
       });
     }
 
     const existingUser = await User.findOne({ where: { username } });
-    if (existingUser) return res.status(400).json({ error: "El nombre de usuario ya existe" });
+    if (existingUser) return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
 
     const existingEmail = await User.findOne({ where: { email } });
     if (existingEmail) return res.status(400).json({ error: "El email ya está registrado" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       firstname,
       lastname,
@@ -63,163 +48,108 @@ exports.register = async (req, res) => {
       role: role || "user"
     });
 
-    console.log("Usuario creado con éxito en MySQL:", newUser.id);
-
     return res.status(201).json({
-      message: "Usuario registrado correctamente",
+      message: "Registro completado con éxito",
       user: { id: newUser.id, username: newUser.username, role: newUser.role }
     });
   } catch (error) {
-    // Capturar errores de restricción de Sequelize (Unicidad)
     if (error.name === "SequelizeUniqueConstraintError" || error.name === "SequelizeValidationError") {
       const detail = error.errors?.[0];
-      let msg = "Error de validación";
-
-      if (detail) {
-        if (detail.path === "email") msg = "El email ya está registrado";
-        else if (detail.path === "username") msg = "El nombre de usuario ya existe";
-        else msg = detail.message;
-      }
-
-      console.log("⚠ Conflicto detectado en registro:", msg);
+      const msg = detail ? (detail.path === "email" ? "Email ya registrado" : detail.message) : "Error de validación";
       return res.status(400).json({ error: msg });
     }
 
-    // Error genérico de base de datos o lógica
-    console.error("❌ ERROR CRÍTICO EN REGISTRO:", error);
-    return res.status(500).json({
-      error: "Error interno en el registro",
-      message: error.message,
-      type: error.name
-    });
+    console.error("Registration Error:", error.message);
+    return res.status(500).json({ error: "Error interno durante el registro" });
   }
 };
 
-/**
- * Iniciar sesión
- * @async
- * @function login
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ where: { username } });
-    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(401).json({ error: "Contraseña incorrecta" });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: "Credenciales no válidas" });
+    }
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Guardar refresh token en la DB
     await user.update({ refreshToken });
 
     res.json({
-      message: "Login exitoso",
       accessToken,
       refreshToken,
       user: { id: user.id, username: user.username, role: user.role }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al iniciar sesión" });
+    console.error("Login Error:", error.message);
+    res.status(500).json({ error: "Error de autenticación" });
   }
 };
 
-/**
- * Renovar Access Token usando Refresh Token
- * @async
- * @function refreshToken
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
-  if (!refreshToken) return res.status(401).json({ error: "Refresh Token requerido" });
+  if (!refreshToken) return res.status(401).json({ error: "Token de renovación ausente" });
 
   try {
     const user = await User.findOne({ where: { refreshToken } });
-    if (!user) return res.status(403).json({ error: "Refresh Token inválido o expirado" });
+    if (!user) return res.status(403).json({ error: "Sesión expirada" });
 
     jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, decoded) => {
       if (err || user.id !== decoded.id) {
-        return res.status(403).json({ error: "Token inválido" });
+        return res.status(403).json({ error: "Sesión no válida" });
       }
 
       const accessToken = generateAccessToken(user);
       res.json({ accessToken });
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al renovar token" });
+    console.error("Refresh Error:", error.message);
+    res.status(500).json({ error: "Error al renovar sesión" });
   }
 };
 
-/**
- * Solicitar restablecimiento de contraseña
- * @async
- * @function forgotPassword
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(200).json({ message: "Si el correo existe, se enviará un enlace" });
-
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
-    await sendResetEmail(email, token);
-
-    res.json({ message: "Si el correo existe, se enviará un enlace" });
+    if (user) {
+      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+      await sendResetEmail(email, token);
+    }
+    // Consistent message for security
+    res.json({ message: "Si el correo está registrado, recibirá un enlace de recuperación pronto" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error enviando el correo" });
+    console.error("Forgot Password Error:", error.message);
+    res.status(500).json({ error: "No se pudo procesar la solicitud" });
   }
 };
 
-/**
- * Restablecer contraseña con token
- * @async
- * @function resetPassword
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
   try {
     if (!validatePassword(password)) {
-      return res.status(400).json({
-        error: "La contraseña debe tener mínimo 5 caracteres, al menos una mayúscula y un número"
-      });
+      return res.status(400).json({ error: "Requisitos de contraseña no cumplidos" });
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findByPk(decoded.id);
-    if (!user) return res.status(400).json({ error: "Usuario no encontrado" });
+    if (!user) return res.status(400).json({ error: "Cuenta no encontrada" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await user.update({ password: hashedPassword });
 
-    res.json({ message: "Contraseña restablecida correctamente" });
+    res.json({ message: "Contraseña actualizada correctamente" });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: "Token inválido o expirado" });
+    console.error("Reset Password Error:", error.message);
+    res.status(400).json({ error: "Enlace inválido o expirado" });
   }
 };
 
-/**
- * Obtener todos los usuarios (solo admin)
- * @async
- * @function getAllUsers
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
@@ -227,18 +157,11 @@ exports.getAllUsers = async (req, res) => {
     });
     res.json(users);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al obtener los usuarios" });
+    console.error("Fetch Users Error:", error.message);
+    res.status(500).json({ error: "No se pudieron obtener los usuarios" });
   }
 };
 
-/**
- * Obtener un usuario por ID
- * @async
- * @function getUserById
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id, {
@@ -247,18 +170,11 @@ exports.getUserById = async (req, res) => {
     if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
     res.json(user);
   } catch (error) {
-    console.error(error);
+    console.error("Fetch User Error:", error.message);
     res.status(500).json({ error: "Error al obtener el usuario" });
   }
 };
 
-/**
- * Actualizar un usuario (hash de contraseña si se proporciona)
- * @async
- * @function updateUser
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.updateUser = async (req, res) => {
   try {
     const { firstname, lastname, email, username, role, password } = req.body;
@@ -267,40 +183,30 @@ exports.updateUser = async (req, res) => {
 
     const updates = { firstname, lastname, email, username, role };
 
-    // Si se envía contraseña, la hasheamos
     if (password) {
       if (!validatePassword(password)) {
-        return res.status(400).json({
-          error: "La contraseña debe tener mínimo 5 caracteres, al menos una mayúscula y un número"
-        });
+        return res.status(400).json({ error: "Contraseña no válida" });
       }
       updates.password = await bcrypt.hash(password, 10);
     }
 
     await user.update(updates);
-    res.json({ message: "Usuario actualizado correctamente", user });
+    res.json({ message: "Perfil actualizado correctamente", user: { id: user.id, username: user.username } });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al actualizar usuario" });
+    console.error("Update User Error:", error.message);
+    res.status(500).json({ error: "Error al actualizar" });
   }
 };
 
-/**
- * Eliminar un usuario
- * @async
- * @function deleteUser
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- */
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
     await user.destroy();
-    res.json({ message: "Usuario eliminado correctamente" });
+    res.json({ message: "Cuenta de usuario eliminada" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al eliminar usuario" });
+    console.error("Delete User Error:", error.message);
+    res.status(500).json({ error: "No se pudo eliminar el usuario" });
   }
 };

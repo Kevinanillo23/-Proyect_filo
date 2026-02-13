@@ -5,9 +5,9 @@ const config = {
     port: process.env.PORT || 5000,
     clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
     jwt: {
-        secret: process.env.JWT_SECRET || 'tu_secreto_super_seguro',
-        refreshSecret: process.env.REFRESH_TOKEN_SECRET || 'tu_secreto_refresh_super_seguro',
-        expiresIn: '30m',
+        secret: process.env.JWT_SECRET || 'dev_secret_key',
+        refreshSecret: process.env.REFRESH_TOKEN_SECRET || 'dev_refresh_key',
+        expiresIn: '1h',
         refreshExpiresIn: '7d'
     },
     mysql: {
@@ -15,7 +15,7 @@ const config = {
         user: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD || '',
         name: process.env.DB_NAME || 'filco',
-        dialect: process.env.DB_DIALECT || 'mysql'
+        dialect: 'mysql'
     },
     mongodb: {
         uri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/revista'
@@ -30,17 +30,14 @@ const config = {
     }
 };
 
-// Simple validation
-const requiredEnv = ['JWT_SECRET', 'REFRESH_TOKEN_SECRET'];
-requiredEnv.forEach(key => {
-    if (!process.env[key]) {
-        if (config.env === 'production') {
-            console.error(`⚠️ CRITICAL: Environment variable ${key} is missing! Using temporary fallback.`);
-            // Fallback temporal para que no explote el deploy
-            process.env[key] = "fallback_secret_temporary_123";
+// Validate critical security environment variables in production
+if (config.env === 'production') {
+    const criticalVars = ['JWT_SECRET', 'REFRESH_TOKEN_SECRET'];
+    criticalVars.forEach(key => {
+        if (!process.env[key]) {
+            console.error(`ERROR: Security variable ${key} is missing in production environment.`);
         }
-    }
-});
-
+    });
+}
 
 module.exports = config;

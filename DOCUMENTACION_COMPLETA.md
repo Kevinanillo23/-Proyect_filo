@@ -1,92 +1,60 @@
-# 📚 Documentación Técnica de Ingeniería: FILCO
+# Memoria Técnica: Filosofía&Co (FILCO)
 
-Esta memoria técnica detalla la infraestructura, seguridad y flujos de datos de **Filosofía&Co (FILCO)**, una aplicación diseñada bajo estándares de alta disponibilidad y seguridad industrial.
-
----
-
-## 🚀 Funcionalidades Principales
-- **Dashboard Dinámico**: Gestión administrativa completa de usuarios y artículos con roles granulares.
-- **Seguridad Multicapa**: Autenticación persistente con Refresh Tokens y protección activa contra ataques comunes (DoS, XSS).
-- **Lectura Fluida**: Sistema de artículos con carga optimizada y sección de comentarios en tiempo real.
-- **Búsqueda Avanzada**: Filtrado por categorías y texto con resultados instantáneos.
-- **Resiliencia de Datos**: Diseño tolerante a fallos con duplicidad de bases de datos.
-
-## 🏗️ 1. Arquitectura de Sistemas
-El ecosistema está diseñado siguiendo un patrón **MVC (Modelo-Vista-Controlador)** desacoplado, lo que permite el escalado independiente del frontend y el backend.
-
-### **Diagrama de Flujo de Datos**
-```mermaid
-graph TD
-    A[Frontend: React 19] -- REST API / JWT --> B[Backend: Express 5]
-    B -- Sequelize --> C[(MySQL: Supabase)]
-    B -- Mongoose --> D[(MongoDB: Atlas)]
-    B -- Lógica de Failover --> E[(DB Locales de Respaldo)]
-    B -- Security Layer --> F{Anti-DDoS / XSS}
-```
+Este documento detalla los aspectos técnicos, de infraestructura y seguridad de **Filosofía&Co**, una aplicación web diseñada con un enfoque en la escalabilidad y la robustez.
 
 ---
 
-## 🗄️ 2. Estrategia de Persistencia Políglota
-FILCO utiliza una arquitectura de base de datos dual para optimizar cada tipo de dato:
+## 🏗️ Arquitectura de Sistemas
 
-### **A. Estructura Relacional (MySQL/Supabase)**
-- **Módulo**: Gestión de Usuarios, Roles y Refresh Tokens.
-- **Propósito**: Garantizar la integridad referencial y transacciones ACID en los procesos de autenticación.
+La aplicación utiliza un patrón **MVC (Modelo-Vista-Controlador)** desacoplado en el monorepo, permitiendo una gestión clara de la lógica de negocio y la interfaz de usuario.
 
-### **B. Estructura Documental (MongoDB Atlas)**
-- **Módulo**: Artículos y Comentarios.
-- **Propósito**: Flexibilidad absoluta para contenidos ricos. MongoDB gestiona los hilos de comentarios como subdocumentos, lo que reduce la latencia de lectura en un 40%.
-
-### **🔄 Resiliencia: Sistema de Failover**
-Hemos implementado una lógica de reconexión inteligente:
-- Si la conexión a la nube falla, el sistema conmuta automáticamente a instancias locales de seguridad, garantizando la operatividad del arranque.
+### Flujo de Datos
+1. **Frontend (React 19)**: Cliente SPA que consume una API RESTful.
+2. **Backend (Express 5)**: Servidor de aplicaciones con middleware de seguridad y validación.
+3. **Persistencia Dual**:
+    - **MySQL (Sequelize)**: Gestión relacional para perfiles de usuario, roles y tokens de sesión (integridad ACID).
+    - **MongoDB (Mongoose)**: Gestión documental para artículos y comentarios (flexibilidad y alta velocidad de lectura).
 
 ---
 
-## 🔐 3. Blindaje y Seguridad Senior
+## 🔐 Seguridad y Autenticación
 
-### **Autenticación en dos capas (Refresh Token Flow)**
-A diferencia de sistemas básicos, FILCO utiliza:
-- **Access Token**: Token de corta duración para peticiones seguras.
-- **Refresh Token**: Almacenado en DB para renovar sesiones sin pedir login constante al usuario, manteniendo la seguridad del sistema.
+### Gestión de Tokens (JWT)
+Se ha implementado un sistema de doble token para equilibrar seguridad y experiencia de usuario:
+- **Access Token**: Vida corta (1h), viaja en los headers para autorizar peticiones.
+- **Refresh Token**: Vida larga (7d), almacenado en la base de datos para la renovación de sesiones.
 
-### **Protección Perimetral**
-1.  **Rate Limiting**: Prevención activa contra ataques de fuerza bruta.
-2.  **Sanitización Automática**: Middlewares que limpian ataques XSS y NoSQL Injections en tiempo real.
-3.  **Helmet.js**: Inyección de cabeceras de seguridad HTTP completas.
-
----
-
-## 🧪 4. Ingeniería de Calidad (QA)
-
-### **Pruebas de Carga (JMeter)**
-Validación de robustez simulando **100 usuarios concurrentes**.
-- **Resultado**: Latencia media < 200ms.
-- **Métrica**: 0% de errores bajo estrés máximo.
-
-### **Testing E2E (Cypress)**
-Suite automatizada que valida flujos críticos:
-- Registro/Login con validación de roles.
-- CRUD de artículos y seguridad de comentarios.
+### Capas de Protección
+- **CORS & Helmet**: Configuración de seguridad en cabeceras HTTP.
+- **Encryption**: Uso de Bcrypt con salt rounds para el almacenamiento de contraseñas.
+- **Rate Limiting**: Protección contra ataques de fuerza bruta en los endpoints de autenticación.
+- **Sanitización**: Limpieza activa de payloads para prevenir XSS e inyecciones NoSQL.
 
 ---
 
-## 📁 5. Estructura del Proyecto
-```bash
-├── Revista_Back/backend/      # Ingeniería de Servidor
-│   ├── Middleware/            # Validadores y Seguridad
-│   ├── controllers/           # Lógica de Negocio
-│   ├── models/                # Modelos Híbridos (SQL/NoSQL)
-│   └── docs/                  # Documentación JSDoc
-└── Revista_Front/frontend/    # Interfaz HUD/Glassmorphism
-    ├── src/components/        # Componentes Atómicos
-    ├── src/hooks/             # Lógica de Estado (Custom Hooks)
-    └── cypress/               # Suite de Tests E2E
-```
+## ⚙️ Infraestructura y DevOps
+
+### Contenerización (Docker)
+- **Multi-stage build**: Proceso de construcción que separa la etapa de compilación del frontend de la imagen de ejecución final, reduciendo el tamaño de la imagen en más de un 60%.
+- **No-Root Execution**: El contenedor corre bajo un usuario sin privilegios (`node`) para minimizar riesgos de seguridad.
+
+### Orquestación y Despliegue
+- **Docker Compose**: Entorno local que levanta la API y ambas bases de datos con volúmenes persistentes.
+- **Kubernetes**: Manifiestos listos para producción con estrategias de `RollingUpdate`, asegurando disponibilidad continua durante las actualizaciones.
 
 ---
 
+## 🧪 Control de Calidad
+
+### Pruebas E2E (Cypress)
+Suite de pruebas que valida flujos críticos:
+- Ciclo de vida del usuario (Registro -> Login -> Reset Password).
+- Operaciones CRUD administrativas.
+- Búsqueda y filtrado de contenido.
+
+### Pruebas de Carga (JMeter)
+Validación de rendimiento con usuarios concurrentes para asegurar tiempos de respuesta consistentes (< 200ms) bajo carga moderada.
+
 ---
 
-*Memoria técnica enfocada a auditoría de sistemas, escalabilidad y seguridad. 2026.*
-
+*Memoria técnica actualizada para entornos de producción. 2026.*

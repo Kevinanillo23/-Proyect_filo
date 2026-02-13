@@ -1,35 +1,40 @@
+const bcrypt = require("bcrypt");
 const User = require("./models/User");
-
 const { connectDB } = require("./config/db");
-const config = require("./config/config");
 
-
-(async () => {
+const seedAdmin = async () => {
     try {
+        await connectDB();
+
+        const username = "admin";
         const hashedPassword = await bcrypt.hash("Admin1234", 10);
+
         const [user, created] = await User.findOrCreate({
-            where: { username: "admin" },
+            where: { username },
             defaults: {
-                firstname: "Admin",
+                firstname: "Administrator",
                 lastname: "System",
                 email: "admin@filco.com",
-                username: "admin",
+                username,
                 password: hashedPassword,
                 role: "admin"
             }
         });
 
-        if (!created) {
+        if (created) {
+            console.info(`Initial admin user created: ${username}`);
+        } else {
             user.password = hashedPassword;
             user.role = "admin";
             await user.save();
-            console.log("Password updated for admin");
-        } else {
-            console.log("Admin user created");
+            console.info(`Admin user [${username}] credentials updated`);
         }
+
         process.exit(0);
     } catch (err) {
-        console.error(err);
+        console.error("Seed failure:", err.message);
         process.exit(1);
     }
-})();
+};
+
+seedAdmin();

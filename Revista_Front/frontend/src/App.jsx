@@ -1,9 +1,7 @@
-// src/App.jsx
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-
 import Home from "./pages/Home";
 import Podcast from "./pages/Podcast";
 import Portal from "./pages/Portal";
@@ -12,11 +10,9 @@ import Revista from "./pages/Revista";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
-
-// Admin CRUD
 import Article from "./pages/Article";
 import ArticleDetail from "./pages/ArticleDetail";
-import Users from "./pages/Users"; // 👈 nueva ruta de gestión de usuarios
+import Users from "./pages/Users";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import PhilosophyBackground from "./components/PhilosophyBackground";
@@ -30,7 +26,6 @@ function App() {
 
       <div className="main-content">
         <Routes>
-          {/* Rutas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/podcast" element={<Podcast />} />
           <Route path="/portal" element={<Portal />} />
@@ -40,7 +35,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          {/* Rutas protegidas (Requieren al menos estar logueado) */}
+          {/* User Protected Routes */}
           <Route
             path="/article/:id"
             element={
@@ -50,7 +45,7 @@ function App() {
             }
           />
 
-          {/* Rutas de Administrador */}
+          {/* Management Routes */}
           <Route
             path="/article"
             element={
