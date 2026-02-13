@@ -1,0 +1,12 @@
+{
+    "name": "filco-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "install:all": "npm install --prefix Revista_Back/backend && npm install --prefix Revista_Front/frontend",
+        "build:frontend": "npm run build --prefix Revista_Front/frontend",
+        "prepare:public": "mkdir -p Revista_Back/backend/public && cp -r Revista_Front/frontend/dist/* Revista_Back/backend/public/",
+        "build": "npm run install:all && npm run build:frontend && npm run prepare:public",
+        "start": "node Revista_Back/backend/server.js"
+    }
+}
