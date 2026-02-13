@@ -36,7 +36,7 @@ app.use("/api/articles", articleRoutes);
 if (config.env === "production") {
   const publicPath = path.join(__dirname, "public");
   app.use(express.static(publicPath));
-  app.get("*", (req, res) => {
+  app.get("(.*)", (req, res) => {
     if (!req.url.startsWith("/api")) {
       res.sendFile(path.join(publicPath, "index.html"));
     }
