@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Main API / Backend Service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: filco_api
+    restart: always
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      # Database Connections
+      - DB_HOST=mysql_db
+      - DB_USER=${MYSQL_USER:-filco_user}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-filco_pass}
+      - DB_NAME=${MYSQL_DATABASE:-filco_db}
+      - DB_DIALECT=mysql
+      - MONGO_URI=mongodb://mongo_db:27017/filco_db
+      # Security (JWT Dual Token)
+      - JWT_SECRET=${JWT_SECRET:-your_super_secret_jwt_key}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET:-your_super_secret_refresh_key}
+      # Email Service
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+    ports:
+      - "5000:5000"
+    networks:
+      - filco_internal
+    depends_on:
+      - mysql_db
+      - mongo_db
+
+  # MySQL Database (SQL)
+  mysql_db:
+    image: mysql:8
+    container_name: filco_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-filco_db}
+      MYSQL_USER: ${MYSQL_USER:-filco_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-filco_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_persistence:/var/lib/mysql
+    networks:
+      - filco_internal
+
+  # MongoDB Database (NoSQL)
+  mongo_db:
+    image: mongo:latest
+    container_name: filco_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-filco_db}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_persistence:/data/db
+    networks:
+      - filco_internal
+
+networks:
+  filco_internal:
+    driver: bridge
+
+volumes:
+  mysql_persistence:
+  mongo_persistence:

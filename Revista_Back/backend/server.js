@@ -46,11 +46,23 @@ const startServer = async () => {
 
 };
 
+const path = require("path");
+
 // Routes
-app.get("/", (req, res) => res.send("API Revista Online - Running"));
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
+
+if (config.env === "production") {
+  app.use(express.static(path.join(__dirname, "public")));
+  app.get("*", (req, res) => {
+    if (!req.url.startsWith("/api")) {
+      res.sendFile(path.join(__dirname, "public", "index.html"));
+    }
+  });
+} else {
+  app.get("/", (req, res) => res.send("API Revista Online - Running"));
+}
 
 // Swagger & Errors
 setupSwagger(app);
